@@ -74,5 +74,18 @@ app.use('/', index);
 const authRoutes = require("./routes/auth.routes");
 app.use("/", authRoutes);
 
+const generalRoutes = require("./routes/generalroutes");
+app.use("/", generalRoutes);
+
+const adminRoutes = require("./routes/admin/adminroutes");
+app.use("/", adminRoutes);
+
+const teacherRoutes = require("./routes/teacher/teacherroutes");
+app.use("/", teacherRoutes);
+
+const parentRoutes = require("./routes/parent/parentroutes");
+app.use("/", parentRoutes);
+
+
 
 module.exports = app;

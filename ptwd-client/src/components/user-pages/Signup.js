@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
-
+import Setup from "../setup/Setup";
+import { Switch, Route, NavLink, Link } from "react-router-dom";
 
 export default class Signup extends React.Component {
     constructor(props){
@@ -9,7 +10,8 @@ export default class Signup extends React.Component {
             fullName: "",
             email: "",
             password:"",
-            message: null
+            message: null,
+            role: "Unassigned",
         }
     }
 
@@ -18,6 +20,7 @@ export default class Signup extends React.Component {
         const { name, value } = event.target;
         this.setState({ [name]: value });
     }
+
 
     handleSubmit (event){
         // console.log("submitting form");
@@ -40,31 +43,39 @@ export default class Signup extends React.Component {
     }
 
     render(){
-        console.log("Do I have user in Signup: ", this.props.currentUser)
-        const { fullName, email, password } = this.state;
-        // console.log("STATE: ", this.state);
+        console.log("Do I have user in Signup? This.props.currentUser: ", this.props.currentUser)
+        // console.log("The current user's role:", this.props.currentUser[0])
+        const { fullName, email, password, role } = this.state;
+        console.log("SIGNUP STATE: ", this.state);
         if(this.props.currentUser){
             return(
-                <div>
-                    <h2> Welcome to your app, { this.props.currentUser.fullName } ! You're signed in! </h2>
-                </div>
+            
+            <div>
+
+            <Setup 
+              fullName = { this.props.currentUser.fullName }
+              role = {this.props.currentUser.role}   
+              onUserChange = { userDoc => this.syncCurrentUser(userDoc) }   
+            />         
+            </div>
             )
         }
 
         return (
             <section>
                 <h2> Sign up </h2>
-                <form onSubmit ={ event => this.handleSubmit(event) } >
+                <form onSubmit = {event => this.handleSubmit(event) } >
+                                        
                     <label> Full name: </label>
                     <input
                         value={fullName} // this.state.fullName
                         onChange = { event => this.genericSync(event) } 
                         type="text"
                         name="fullName"
-                        placeholder="Jesus"
+                        placeholder="Jane Doe"
                     />
 
-                     <label> Email: </label>
+                    <label> Email: </label>
                     <input
                         value={email} // this.state.email
                         onChange = { event => this.genericSync(event) } 
@@ -85,6 +96,7 @@ export default class Signup extends React.Component {
                 </form>
                 {/* if the message is not null (basically if there's a message) then show it in this <div> tag */}
                 { this.state.message && <div> { this.state.message } </div> }
+            
             </section>
 
 

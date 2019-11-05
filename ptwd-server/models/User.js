@@ -18,7 +18,14 @@ const userSchema =  new Schema({
   encryptedPassword: {
     type: String,
     required: true
-  }
+  },
+  role: {
+    type: String,
+    variety: ['Admin', 'Teacher', 'Parent'],
+    default: 'UNASSIGNED'
+  },
+  classes: {type: Schema.Types.ObjectId, ref: 'Class'},
+  image: String
 }, 
 {
   timestamps: true

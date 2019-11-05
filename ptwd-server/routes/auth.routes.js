@@ -1,16 +1,13 @@
 const express = require("express");
-
 const authRouter = express.Router();
-
 const User = require("../models/User");
-
 const bcrypt = require("bcryptjs");
-
 const passport = require("passport");
 
+// NEW USER SIGNUP ROUTE =======================================================================================
 authRouter.post("/api/signup", (req, res, next) => {
   console.log("frontend form data: ", req.body);
-  const { fullName, email, password } = req.body;
+  const { fullName, email, password, role } = req.body;
 
   if(fullName == "" || email == "" || password.match(/[0-9]/) === null){
     // send JSON file to the frontend if any of these fields are empty or password doesn't contain a number
@@ -31,7 +28,7 @@ authRouter.post("/api/signup", (req, res, next) => {
       const encryptedPassword = bcrypt.hashSync(password, salt);
 
       User
-        .create({ fullName, email, encryptedPassword })
+        .create({ fullName, email, encryptedPassword, role })
         .then( userDoc => { 
           // if all good, log in the user automatically
           // "req.login()" is a Passport method that calls "serializeUser()"
@@ -50,6 +47,9 @@ authRouter.post("/api/signup", (req, res, next) => {
     })
     .catch(err => next(err)); // close User.findOne()
 });
+
+
+// USER LOGIN ROUTE =======================================================================================
 
 authRouter.post("/api/login", (req, res, next)  => {
   passport.authenticate("local", (err, userDoc, failureDetails) => {
@@ -73,17 +73,22 @@ authRouter.post("/api/login", (req, res, next)  => {
   })(req, res, next);
 })
 
+// USER LOGOUT ROUTE =======================================================================================
+
 authRouter.delete("/api/logout", (req, res, next) => {
   // "req.logout()" is a Passport method that removes the user ID from session
   req.logout();
   // send empty "userDoc" when you log out
   res.json({ userDoc: null })
+  // console.log("LOGGED OUT", userDoc)
 })
 
+// CHECK USER ROUTE =======================================================================================
 // check if user is logged in and if we are logged in what are user's details
 // this is the information that is useful for the frontend application
+
 authRouter.get("/api/checkuser", (req, res, next) => {
-  // console.log("do i have user: ", req.user);
+  console.log("do i have user: ", req.user);
   if(req.user){
     req.user.encryptedPassword = undefined;
     // res.json(req.user)
@@ -92,4 +97,31 @@ authRouter.get("/api/checkuser", (req, res, next) => {
     res.status(401).json({ userDoc: null })
   }
 })
+
+// NEW USER - ASSIGN ROLE =======================================================================================
+authRouter.put("/api/setup/role", (req, res, next) => {
+
+  let id = req.user._id;
+  console.log("req.user._id is:"+ id)
+  
+  const userRole = req.body.role;
+  console.log("userRole is:" +userRole.role)
+  console.log("req.body.role is:"+req.body.role)
+
+  User
+    .findByIdAndUpdate(id, {$set: {role: userRole}})
+    .then( theUpdatedUser => {
+        res.status(200).json({ message: "Your role has been updated.", theUpdatedUser});
+        console.log(theUpdatedUser.data)
+      }
+    )
+    .catch(err => next(err)); // close User.findByIdAndUpdate()
+})
+
+
+
+
+
+
+
 module.exports = authRouter;
