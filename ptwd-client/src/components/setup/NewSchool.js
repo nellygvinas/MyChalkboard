@@ -1,13 +1,21 @@
 import React from "react";
 import axios from "axios";
 import { Switch, Route, NavLink, Link } from "react-router-dom";
+import NewClass from "../setup/NewClass"
+
 
 
 export default class NewSchool extends React.Component {
-
+  
   constructor(props){
     super(props);
     this.state = {
+      currentUser: {
+        userId: this.props.location.state.currentUser.userId,
+        fullName: this.props.location.state.currentUser.fullName,
+        email: this.props.location.state.currentUser.email,
+        role: this.props.location.state.currentUser.role
+        },
       schoolName: "",
       address: "",
       city:"",
@@ -16,17 +24,40 @@ export default class NewSchool extends React.Component {
       role: "Admin",
       image: "",
       message: null,
-      schoolAdded: false
-      }
+      schoolAdded: false,
+      schoolId: ""
     }
+  }
+  
+  
+  componentDidMount(){
+    console.log("State upon mount - New school component: ", this.state)
+    const userRole = this.state.currentUser.role
 
-    showAddedSchool(){
+    axios.put(
+      // route we are hitting in the backend
+      "http://localhost:3001/api/setup/role",
+      // the data from the form (AKA req.body 🚀) that we are sending to this route to do the job
+      this.state.currentUser,
+      // secure sending
+      { withCredentials: true }
+    )
+    .then( responseFromServer => {
+        console.log("Response from server after role post is:", responseFromServer.data);
+    })
+    .catch( err => console.log("Err in role setup: ", err)); 
+    
+  }
 
-      if (this.state.schoolAdded)
 
-        return(
-          
-          <div>
+  
+  showAddedSchool(){
+    
+    if (this.state.schoolAdded)
+    
+    return(
+      
+      <div>
 
           <h3>The School has been added: {this.state.schoolName}</h3>
           <h4>School Address: {this.state.address}</h4>
@@ -35,54 +66,62 @@ export default class NewSchool extends React.Component {
           {this.state.zip}
 
         <div>
-        <Link to= "/setup/class"> Add Classes </Link>
+        <Link to={{
+          pathname: "/setup/class",
+          state: {
+          schoolId: this.state.schoolId,
+          schoolName: this.state.schoolName
+          }
+          }}>Add Classes</Link>
+
         </div>   
           
           </div>
         )
-  
+        
       }
-
-
-    genericSync(event){
-      // console.log("The event.target is: ", event.target.value)
-      const { name, value } = event.target;
-      this.setState({ [name]: value });
-      console.log("The state while changing:", this.state)
-    }
-
-    handleSubmit (event){
       
-      event.preventDefault();
-      this.setState({ schoolAdded: true });
       
-      axios.post(
-        // route we are hitting in the backend
-        "http://localhost:3001/api/setup/school",
-        // the data from the form (AKA req.body 🚀) that we are sending to this route to do the job
-        this.state,
-        // secure sending
-        { withCredentials: true }
-        )
-        .then( responseFromServer => {
-          console.log("Form submitted. The state is:", this.state);
-          console.log("Response from server after post is:", responseFromServer.data);
+      genericSync(event){
+        // console.log("The event.target is: ", event.target.value)
+        const { name, value } = event.target;
+        this.setState({ [name]: value });
+        console.log("The state while changing:", this.state)
+      }
+      
+      handleSubmit (event){
+        
+        event.preventDefault();
+        this.setState({ schoolAdded: true });
+        
+        axios.post(
+          // route we are hitting in the backend
+          "http://localhost:3001/api/setup/school",
+          // the data from the form (AKA req.body 🚀) that we are sending to this route to do the job
+          this.state,
+          // secure sending
+          { withCredentials: true }
+          )
+          .then( responseFromServer => {
+            console.log("Response from server after post is:", responseFromServer.data);
+            
+            // if(responseFromServer.data) return this.setState({ message: responseFromServer.data.message })
+            this.setState({ schoolId: responseFromServer.data.school._id });
+            
+            console.log("Form submitted. The state is:", this.state);
+          })
+          .catch( err => {
+            // console.log("Err in school setup: ", err)
+            if(err.data) return this.setState({ message: err.data.message }) 
+          })
           
-          if(responseFromServer.data) return this.setState({ message: responseFromServer.data.message })
-      })
-      .catch( err => {
-        // console.log("Err in school setup: ", err)
-        if(err.data) return this.setState({ message: err.data.message }) 
-      })
-
-      
-  }
-
-
-    render(){
-
-
-      return (
+          
+        }
+        
+        
+      render(){
+          
+        return (
         <div>
 
          <h1>PLEASE CREATE A NEW SCHOOL</h1> 

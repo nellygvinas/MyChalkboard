@@ -9,76 +9,111 @@ export default class Setup extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      fullName: "",
-      email: "",
-      password:"",
-      role: "Unassigned",
+      currentUser: {
+        userId: this.props.currentUser._id,
+        fullName: this.props.currentUser.fullName,
+        email: this.props.currentUser.email,
+        role: this.props.currentUser.role
+      },
       classes: "",
       image: "",
       message: null
       }
     }
 
-    genericSync(event){
-      // console.log("what is: ", event.target.value)
-      const { name, value } = event.target;
-      this.setState({ [name]: value })
+    componentDidMount(){
+      console.log("Setup component - Initial state upon mount", this.state)
     }
 
-    syncCurrentUSer(user){
-      this.setState({ currentUser: user })
+    shouldComponentUpdate() {
+      console.log("Setup component - state upon update", this.state)
+
     }
 
-    handleRole (event){
-    // console.log("submitting form");
-    /*event.preventDefault();
+
+    handleRole(){
+    
+      console.log("submitting handle role");
 
       axios.put(
           // route we are hitting in the backend
           "http://localhost:3001/api/setup/role",
           // the data from the form (AKA req.body 🚀) that we are sending to this route to do the job
-          this.state,
+          this.state.role,
           // secure sending
           { withCredentials: true }
         )
         .then( responseFromServer => {
-            // console.log("response is:", responseFromServer);
-            const { userDoc } = responseFromServer.data;
-            // this.props.onUserChange(userDoc);
+            console.log("response is:", responseFromServer);
         })
-        .catch( err => console.log("Err in role setup: ", err)); */
+        .catch( err => console.log("Err in role setup: ", err)); 
 
-    } //end of handleSubmit
+    } //end of handleRole
+
+
+    assignAdmin() {
+      this.setState(({currentUser}) => ({currentUser: {
+        ...currentUser,
+        role: "Admin",
+      }}))
+    
+    console.log("State after assign Admin", this.state.currentUser)
+    }
+
+    assignTeacher(){
+      this.setState({ role: "Teacher" })
+      console.log("This.state Role assigned as Teacher:", this.state.role)
+      this.handleRole()
+    }
+
+    assignParent() {
+      this.setState({ role: "Parent" })
+      console.log("This.state Role assigned as Parent:", this.state.role)
+      this.handleRole()
+    }
+
+
 
 
     render(){
 
-      console.log("Do I have user props in Setup? This.props.currentUser: ", this.props.fullName, this.props.role)
-
+      console.log("Do I have user props in Setup? This.props.currentUser: ", this.props.currentUser)
 
       return (
 
         <div>
           <h1>SETUP COMPONENT</h1>
 
-           <h2> Welcome, {this.props.fullName}! Please select your role: </h2>
+           <h2> Welcome, {this.props.currentUser.fullName}! Please select your role: </h2>
           
+
           <div>
-           <Link to= "/setup/admin"> Administrator </Link>
+           {/* <Link to= "/setup/admin" onClick={() => this.assignAdmin()}> Administrator </Link>
+          </div> */}
+
+          <Link to={{
+            pathname: '/setup/admin',
+            state: {
+              currentUser: {
+                userId: this.state.currentUser.userId,
+                fullName: this.props.currentUser.fullName,
+                email: this.props.currentUser.email,
+                role: "Admin"
+              }
+            }}
+            }> Administrator </Link>
           </div>
+          
            
           <div>
-          <Link to= "/setup/teacher"> Teacher </Link>
+          <Link to= "/setup/teacher" onClick={this.assignTeacher}> Teacher </Link>
           </div>
 
           <div>
-          <Link to= "/setup/parent"> Parent </Link>
+          <Link to= "/setup/parent" onClick={this.assignParent}> Parent </Link>
           </div>     
            
 
-           <Role 
-              onUserChange = { userDoc => this.syncCurrentUser(userDoc) }   
-            /> 
 
 
         </div>

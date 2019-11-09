@@ -52,6 +52,7 @@ authRouter.post("/api/signup", (req, res, next) => {
 // USER LOGIN ROUTE =======================================================================================
 
 authRouter.post("/api/login", (req, res, next)  => {
+  
   passport.authenticate("local", (err, userDoc, failureDetails) => {
     if(err){
       res.status(500).json({ message: "Something went wrong with login." })
@@ -104,18 +105,18 @@ authRouter.put("/api/setup/role", (req, res, next) => {
   let id = req.user._id;
   console.log("req.user._id is:"+ id)
   
-  const userRole = req.body.role;
-  console.log("userRole is:" +userRole.role)
-  console.log("req.body.role is:"+req.body.role)
+  const { userId, role } = req.body;
 
+  console.log("req.body is " + userId, role)
+  
   User
-    .findByIdAndUpdate(id, {$set: {role: userRole}})
+    .findByIdAndUpdate(userId, {$set: {role: role}})
     .then( theUpdatedUser => {
         res.status(200).json({ message: "Your role has been updated.", theUpdatedUser});
-        console.log(theUpdatedUser.data)
       }
     )
     .catch(err => next(err)); // close User.findByIdAndUpdate()
+
 })
 
 

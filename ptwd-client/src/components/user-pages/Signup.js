@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import Setup from "../setup/Setup";
 import { Switch, Route, NavLink, Link } from "react-router-dom";
+// import { threadId } from "worker_threads";
 
 export default class Signup extends React.Component {
     constructor(props){
@@ -35,16 +36,17 @@ export default class Signup extends React.Component {
             { withCredentials: true }
         )
         .then( responseFromServer => {
-            // console.log("response is:", responseFromServer);
             const { userDoc } = responseFromServer.data;
             this.props.onUserChange(userDoc);
+            console.log("userDoc from signup:", userDoc);
         })
         .catch( err => console.log("Err in signup: ", err));
     }
 
     render(){
-        console.log("Do I have user in Signup? This.props.currentUser: ", this.props.currentUser)
+        console.log("User props in Signup? This.props.currentUser: ", this.props.currentUser)
         // console.log("The current user's role:", this.props.currentUser[0])
+        // const userProps = {fullName: this.props.currentUser.fullName, email: this.props.currentUser.email, role: this.props.currentUser.role};
         const { fullName, email, password, role } = this.state;
         console.log("SIGNUP STATE: ", this.state);
         if(this.props.currentUser){
@@ -53,9 +55,7 @@ export default class Signup extends React.Component {
             <div>
 
             <Setup 
-              fullName = { this.props.currentUser.fullName }
-              role = {this.props.currentUser.role}   
-              onUserChange = { userDoc => this.syncCurrentUser(userDoc) }   
+              currentUser = { this.props.currentUser } 
             />         
             </div>
             )
