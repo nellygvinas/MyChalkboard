@@ -26,7 +26,7 @@ export default class AddTeacher extends React.Component {
 
     componentDidMount (){
 
-      axios.get("http://localhost:3001/api/getusers", { withCredentials: true })
+      axios.get(`${process.env.REACT_APP_API_URL}/getusers`, { withCredentials: true })
       .then( responseFromTheBackend => {
         console.log("Users found: ", responseFromTheBackend.data.usersFound)
         this.setState({ allUsers: responseFromTheBackend.data.usersFound });
@@ -63,7 +63,7 @@ export default class AddTeacher extends React.Component {
         <div>  
         <label>User: </label> {eachUser.fullName}
 
-        <button>Add as Teacher</button>
+        <button> Add as Teacher </button>
 
         </div>  
     

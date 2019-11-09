@@ -25,7 +25,7 @@ export default class Logout extends React.Component {
 
         axios.delete(
             // route we are hitting in the backend
-            "http://localhost:3001/api/logout",
+            `${process.env.REACT_APP_API_URL}/logout`,
             // the data from the form (AKA req.body 🚀) that we are sending to this route to do the job
             this.state,
             // secure sending

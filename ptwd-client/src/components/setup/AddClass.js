@@ -52,7 +52,7 @@ export default class AddClass extends React.Component {
 
       axios.get(
           // route we are hitting in the backend
-          "http://localhost:3001/api/setup/class/code",
+          `${process.env.REACT_APP_API_URL}/setup/class/code`,
           // the data from the form (AKA req.body 🚀) that we are sending to this route to do the job
           formClassCode,
           // secure sending

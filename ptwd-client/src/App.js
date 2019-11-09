@@ -28,7 +28,7 @@ class App extends React.Component {
   }
 
   componentDidMount(){
-    axios.get("http://localhost:3001/api/checkuser", { withCredentials: true })
+    axios.get(`${process.env.REACT_APP_API_URL}/checkuser`, { withCredentials: true })
     .then( responseFromTheBackend => {
       console.log("User in APP.JS: ", responseFromTheBackend)
       const { userDoc } = responseFromTheBackend.data;
@@ -46,7 +46,7 @@ class App extends React.Component {
     console.log("Handling logout");
     event.preventDefault();
 
-    axios.delete("http://localhost:3001/api/logout",
+    axios.delete(`${process.env.REACT_APP_API_URL}/logout`,
         this.state,
         // secure sending
         { withCredentials: true }
