@@ -41,7 +41,6 @@ export default class AddTeacher extends React.Component {
       
       this.setState({searchTerm: e.target.value }, ()=>{
   
-      
         let clone = [...this.state.allUsers];
         
         let filteredUsers = this.state.allUsers.filter((eachUser)=>{
@@ -53,6 +52,10 @@ export default class AddTeacher extends React.Component {
       })
     }
 
+    addTeacher(teacher){
+      console.log("item passed to addTeacher function: ", teacher._id)
+      this.setState({visibleUsers: filteredUsers})
+    }
 
     showFoundUsers = () =>{
 
@@ -63,7 +66,7 @@ export default class AddTeacher extends React.Component {
         <div>  
         <label>User: </label> {eachUser.fullName}
 
-        <button> Add as Teacher </button>
+        <button onClick={() => this.addTeacher(eachUser)}> Add as Teacher </button>
 
         </div>  
     
@@ -73,6 +76,7 @@ export default class AddTeacher extends React.Component {
   
     }
 
+   
 
 
     render(){
