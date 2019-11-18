@@ -7,8 +7,9 @@ export default class AddTeacher extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      teacher: null,
-      teacherId: null,
+      classId: this.props.classId,
+      teacher: {teacherName: null,
+        teacherId: null},
       allUsers: null,
       visibleUsers: null,
       searchTerm: "",
@@ -25,6 +26,9 @@ export default class AddTeacher extends React.Component {
 
 
     componentDidMount (){
+
+      console.log("Props on addTeacher mount: ", this.props )
+      console.log("state of addTeacher component on mount: ", this.state)
 
       axios.get(`${process.env.REACT_APP_API_URL}/getusers`, { withCredentials: true })
       .then( responseFromTheBackend => {
@@ -52,10 +56,70 @@ export default class AddTeacher extends React.Component {
       })
     }
 
-    addTeacher(teacher){
-      console.log("item passed to addTeacher function: ", teacher._id)
-      this.setState({visibleUsers: filteredUsers})
+    addTeacher(teacherItem){
+      
+      console.log("item passed to addTeacher function: ", teacherItem)
+      
+      this.setState({ teacher: {
+            teacherName: teacherItem.fullName, 
+            teacherId: teacherItem._id
+          }
+        }, () => {
+            console.log("State after post, teacher and id added:", this.state);
+          
+
+            axios.put(`${process.env.REACT_APP_API_URL}/classinfo/`+this.state.classId, this.state.teacher, { withCredentials: true })
+            .then( responseForUpdateClass => {
+              console.log("Class updated in ClassBox: ", responseForUpdateClass.data)
+            
+
+              axios.get(`${process.env.REACT_APP_API_URL}/classinfo/`+this.state.classId, { withCredentials: true })
+              .then( responseForGetClass => {
+              console.log("Updated Class found: ", responseForGetClass.data)
+              
+
+              this.setState({ teacher: {
+              teacherName: responseForGetClass.data.classFound.teacher.teacherName, 
+              teacherId: responseForGetClass.data.classFound.teacher.teacherId
+              }}, () => {
+              console.log("State after getting updated class:", this.state);
+
+
+              const teacherDoc = responseForGetClass.data.classFound.teacher;
+              console.log("teacherDoc from addTeacher component:", teacherDoc);
+              this.props.onTeacherChange(teacherDoc);
+
+              })
+
+            })
+            .catch(err => console.log("Err while searching for class: ", err))
+
+
+
+
+            })
+            .catch(err => console.log("Err while updating class: ", err))
+          
+          
+          
+          
+          
+          
+          
+          
+          }) 
+
+
+          
+
+
+    
+      
+      
+
     }
+      
+    
 
     showFoundUsers = () =>{
 
@@ -66,7 +130,7 @@ export default class AddTeacher extends React.Component {
         <div>  
         <label>User: </label> {eachUser.fullName}
 
-        <button onClick={() => this.addTeacher(eachUser)}> Add as Teacher </button>
+        <button onClick={() => this.addTeacher(eachUser)}> Assign Teacher </button>
 
         </div>  
     
@@ -84,7 +148,7 @@ export default class AddTeacher extends React.Component {
       return (
         <div>
 
-        <h4 className="title"> Add Teacher</h4>
+        <h4 className="title"> Assign Teacher</h4>
         <label>Search for Teacher:</label><input onChange={this.search}
          value={this.state.searchTerm}>
         </input>

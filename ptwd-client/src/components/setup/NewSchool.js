@@ -25,13 +25,15 @@ export default class NewSchool extends React.Component {
       image: "",
       message: null,
       schoolAdded: false,
-      schoolId: ""
+      schoolId: "",
+      creator: this.props.location.state.currentUser.userId
     }
   }
   
   
   componentDidMount(){
     console.log("State upon mount - New school component: ", this.state)
+    console.log("props on NewSchool mount: ", this.props)
     const userRole = this.state.currentUser.role
 
     axios.put(
@@ -44,6 +46,17 @@ export default class NewSchool extends React.Component {
     )
     .then( responseFromServer => {
         console.log("Response from server after role post is:", responseFromServer.data);
+    
+        axios.get(`${process.env.REACT_APP_API_URL}/setup/role`+this.props.location.state.currentUser.userId, { withCredentials: true })
+        .then( responseFromTheBackend => {
+          console.log("User found after role assigned: ", responseFromTheBackend.data.theUpdatedUser)
+          this.setState({ currentUser: {role: responseFromTheBackend.data.theUpdatedUser }}, () => {
+            console.log("State after role assigned:", this.state)}
+            );
+  
+          })
+        .catch(err => console.log("Err while searching for teacher: ", err))
+    
     })
     .catch( err => console.log("Err in role setup: ", err)); 
     

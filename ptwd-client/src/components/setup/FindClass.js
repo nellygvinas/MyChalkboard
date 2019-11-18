@@ -5,7 +5,7 @@ import AddTeacher from "./AddTeacher"
 import ClassBox from "../class/ClassBox"
 
 
-export default class NewClass extends React.Component {
+export default class FindClass extends React.Component {
 
   constructor(props){
     super(props);
@@ -14,8 +14,8 @@ export default class NewClass extends React.Component {
       className: "",
       teacher: {teacherName: null,
       teacherId: null},
-      schoolName: this.props.location.state.schoolName,
-      schoolId: this.props.location.state.schoolId,
+      schoolName: "",
+      schoolId: "",
       classCode: null,
       creator: "",
       image: "",
@@ -26,8 +26,8 @@ export default class NewClass extends React.Component {
     }
 
     componentDidMount(){
-      console.log("This is a new class");
-      console.log("School props: ", this.props.location.state)
+      console.log("Find class component");
+      
     }
 
 
@@ -67,6 +67,10 @@ export default class NewClass extends React.Component {
               })
             .catch(err => console.log("Err while searching for class: ", err))
 
+
+
+
+
         })
         .catch( err => console.log("Err in class setup: ", err));
   }
@@ -86,40 +90,23 @@ export default class NewClass extends React.Component {
       return (
         <div>
 
-         <h1>CREATE A NEW CLASS</h1> 
+          <div>
 
-              <form onSubmit ={ event => this.handleSubmit(event) } >
-            
-                    <label> Class Name: </label>
-                    <input
-                        // value={schoolName} // this.state.schoolName
-                        onChange = { event => this.genericSync(event) } 
-                        type="text"
-                        name="className"
-                        placeholder="Mr. Smith's Homeroom "
-                    />
+          <h4 className="title"> Find School or Class</h4>
+          <label>Search:</label><input onChange={this.search}
+          value={this.state.searchTerm}>
+          </input>
 
-                    <button> Create Class </button>
-              </form>
+          {this.state.visibleUsers && <div>
 
-              {this.state.classAdded && <div><h3> You created a new class: </h3>
-                  
-                <ClassBox 
-                  classId ={this.state.classId}
-                  className = {this.state.className}
-                  classCode = {this.state.classCode}
-                  teacherName = {this.state.teacher.teacherName}
-                  teacherId = {this.state.teacher.teacherId}
-                  schoolName = {this.state.schoolName}
-                  schoolId = {this.state.schoolId}
-                  creator = {this.state.creator}
-                  parents = {this.state.parents}
-                  />
-                  
-                </div>}
-                  
-                  
-                        
+            <h4>Found users:</h4> 
+            {this.showFoundUsers()}
+          </div>}
+
+
+          </div>
+                
+                
                 {/* if the message is not null (basically if there's a message) then show it in this <div> tag */}
                 { this.state.message && <div> { this.state.message } </div> }
           
@@ -128,9 +115,14 @@ export default class NewClass extends React.Component {
         </div>    
         // end of containing div
 
+
       )
 
     }
+
+
+
+
 
 
 

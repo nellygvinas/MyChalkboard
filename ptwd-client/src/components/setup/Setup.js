@@ -95,7 +95,7 @@ export default class Setup extends React.Component {
             pathname: '/setup/admin',
             state: {
               currentUser: {
-                userId: this.state.currentUser.userId,
+                userId: this.props.currentUser._id,
                 fullName: this.props.currentUser.fullName,
                 email: this.props.currentUser.email,
                 role: "Admin"
@@ -104,9 +104,18 @@ export default class Setup extends React.Component {
             }> Administrator </Link>
           </div>
           
-           
           <div>
-          <Link to= "/setup/teacher" onClick={this.assignTeacher}> Teacher </Link>
+          <Link to={{
+            pathname: '/setup/teacher',
+            state: {
+              currentUser: {
+                userId: this.state.currentUser.userId,
+                fullName: this.props.currentUser.fullName,
+                email: this.props.currentUser.email,
+                role: "Teacher"
+              }
+            }}
+            }> Teacher </Link>
           </div>
 
           <div>

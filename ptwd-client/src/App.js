@@ -8,13 +8,16 @@ import Login from "./components/user-pages/Login";
 import Setup from "./components/setup/Setup";
 // import Logout from "./components/user-pages/Logout"
 import Home from "./components/Home";
+import Account from "./components/user-pages/Account"
 import Role from "./components/Home";
 import NewSchool from "./components/setup/NewSchool"
 import NewClass from "./components/setup/NewClass"
 import AddClass from "./components/setup/AddClass"
+import FindClass from "./components/setup/FindClass"
+import Landing from "./components/landing/Landing"
+import SchoolBox from './components/school/SchoolBox';
+import ClassBox from "./components/class/ClassBox"
 
-
-import CountriesList from "./components/CountriesList";
 
 
 class App extends React.Component {
@@ -38,7 +41,7 @@ class App extends React.Component {
   }
 
   syncCurrentUser(user){
-    this.setState({ currentUser: user })
+    this.setState({ currentUser: user }, () => {console.log("State after user set:", this.state.currentUser)})
   }
 
 
@@ -77,19 +80,21 @@ class App extends React.Component {
             {/* If no current user, signup will show. */}
             { !this.state.currentUser && <NavLink to="/signup"> Signup </NavLink> }
             { !this.state.currentUser && <div> <NavLink to="/login"> Login </NavLink> </div> }
-            <NavLink to="/countries" > Countries </NavLink>
-          </nav>
+            
+            {/* If current user is signed in, Nav will show: */}
+            <div>
             { this.state.currentUser && <Link to="/logout" onClick ={ event => this.handleLogout(event)}> Logout </Link> }  
+            { this.state.currentUser && this.state.currentUser.role && <NavLink to="/landing"> Landing </NavLink> }
+            { this.state.currentUser && this.state.currentUser.role && <NavLink to="/account"> Account </NavLink> }
+            
+            </div>
+          </nav>
         </header>
         <Switch>
         {/* this is example how we would render component normally */}
         {/* <Route exact path="/somePage" component={ someComponentThatWillRenderWhenThisRouteIsHit }   /> */}
           <Route exact path="/" component={ Home }   /> 
-          <Route exact path="/countries" component={ CountriesList }  /> 
-          <Route exact path="/setup/admin" component={ NewSchool }   /> 
-          <Route exact path= "/setup/teacher" component={ NewClass }/> 
-          <Route exact path= "/setup/parent" component={ AddClass }/> 
-          <Route exact path= "/setup/class" component={ NewClass }/> 
+
           {/* if we have to pass some props down to a component,
           we can't use a standard way of rendering using component={},
           but instead we have to use render = {}  like in the example below */}
@@ -106,6 +111,45 @@ class App extends React.Component {
               onUserChange = { userDoc => this.syncCurrentUser(userDoc) }   
             /> 
           }/>}
+
+          <Route exact path="/account" render = { () => 
+            <Account 
+              currentUser = { this.state.currentUser }   
+              onUserChange = { userDoc => this.syncCurrentUser(userDoc) }   
+            /> 
+          }/>
+          
+          <Route exact path="/setup/admin" component={ NewSchool }   /> 
+          
+          <Route exact path= "/setup/teacher" render={props =>
+              <div>
+              <FindClass 
+                currentUser = { this.state.currentUser }   />
+            </div>
+           }/> 
+          
+          <Route exact path= "/setup/parent" component={ AddClass }/> 
+          
+          <Route exact path="/setup/class" component={NewClass}/>
+
+          {<Route exact path="/setup/admin" render = { () => 
+            <NewSchool
+              currentUser = { this.state.currentUser }   
+              // onUserChange = { userDoc => this.syncCurrentUser(userDoc) }   
+            /> 
+          }/>}  
+
+          <Route exact path="/school/details/:schoolId" component = {SchoolBox} /> 
+        
+          <Route exact path="/class/details/:classlId" component = {ClassBox} /> 
+
+
+          {<Route exact path="/landing" render = { () => 
+            <Landing
+              currentUser = { this.state.currentUser }   
+              // onUserChange = { userDoc => this.syncCurrentUser(userDoc) }   
+            /> 
+          }/>}  
 
           
 
