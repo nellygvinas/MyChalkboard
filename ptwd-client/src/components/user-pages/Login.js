@@ -38,27 +38,11 @@ export default class Login extends React.Component {
             { withCredentials: true }
         )
         .then( responseFromServer => {
-            // console.log("response is:", responseFromServer);
+            
             const { userDoc } = responseFromServer.data;
             this.props.onUserChange(userDoc);
-            alert("You are logged in.")
+            
             this.setState({ loggedIn: true });
-
-            // axios.get(`${process.env.REACT_APP_API_URL}/classinfo/`+newClassId, { withCredentials: true })
-            // .then( responseForGetClass => {
-            //   console.log("Class found: ", responseForGetClass.data)
-              
-
-            //   this.setState({ classId: responseForGetClass.data.classFound._id, classCode: responseForGetClass.data.classFound.classCode, classAdded: true, 
-            //   creator: responseForGetClass.data.classFound.creator }, 
-            //   () => {
-            //     console.log("State after post, class added and creator assigned:", this.state)
-            // });
-
-            //   })
-            // .catch(err => console.log("Err while searching for class: ", err))
-
-
 
         })
         .catch( err => {

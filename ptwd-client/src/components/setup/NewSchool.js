@@ -82,6 +82,12 @@ export default class NewSchool extends React.Component {
         <Link to={{
           pathname: "/setup/class",
           state: {
+          currentUser: {
+            userId: this.props.location.state.currentUser.userId,
+            fullName: this.props.location.state.currentUser.fullName,
+            email: this.props.location.state.currentUser.email,
+            role: this.props.location.state.currentUser.role
+            },
           schoolId: this.state.schoolId,
           schoolName: this.state.schoolName
           }
@@ -99,7 +105,7 @@ export default class NewSchool extends React.Component {
         // console.log("The event.target is: ", event.target.value)
         const { name, value } = event.target;
         this.setState({ [name]: value });
-        console.log("The state while changing:", this.state)
+        // console.log("The state while changing:", this.state)
       }
       
       handleSubmit (event){

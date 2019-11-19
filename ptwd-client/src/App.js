@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import axios from "axios";
-import { Switch, Route, NavLink, Link } from "react-router-dom";
+import { Switch, Route, NavLink, Link, Redirect } from "react-router-dom";
 
 import Signup from "./components/user-pages/Signup";
 import Login from "./components/user-pages/Login";
@@ -17,6 +17,7 @@ import FindClass from "./components/setup/FindClass"
 import Landing from "./components/landing/Landing"
 import SchoolBox from './components/school/SchoolBox';
 import ClassBox from "./components/class/ClassBox"
+import ClassDetails from "./components/class/ClassDetails"
 
 
 
@@ -26,7 +27,8 @@ class App extends React.Component {
     super();
     
     this.state = {
-      currentUser: null
+      currentUser: null,
+      // redirect: false
     }
   }
 
@@ -37,12 +39,20 @@ class App extends React.Component {
       const { userDoc } = responseFromTheBackend.data;
       this.syncCurrentUser(userDoc);
     })
-    .catch(err => console.log("Err while getting the user from the checkuser route: ", err))
+    .catch(err => {
+      // this.setState({ redirect: true }, () => {console.log("State after user not found:", this.state.currentUser)})
+      console.log("Err while getting the user from the checkuser route: ", err)})
   }
 
   syncCurrentUser(user){
     this.setState({ currentUser: user }, () => {console.log("State after user set:", this.state.currentUser)})
   }
+
+  // renderRedirect = () => {
+  //   if (this.state.redirect) {
+  //     return <Redirect to='/' />
+  //   }
+  // }
 
 
   handleLogout(event){
@@ -60,19 +70,27 @@ class App extends React.Component {
         // this.props.onUserChange(userDoc);
         this.syncCurrentUser(userDoc);
         alert("You are logged out.")
+
+        // possible  set state for redirecting:
+        // this.setState({ redirect: true }, () => {console.log("State after user not found:", this.state.currentUser)})
     })
     .catch( err => {
         console.log("err: ", err)
         // if(err.response.data) return this.setState({ message: err.response.data.message })
     });
-}
+  
+    
+  }
 
 
 
 
   render (){   
     // console.log("the state in APPJS: ", this.state);
+
+
     return (
+
       <div >
         <header>
           <nav>
@@ -85,15 +103,33 @@ class App extends React.Component {
             <div>
             { this.state.currentUser && <Link to="/logout" onClick ={ event => this.handleLogout(event)}> Logout </Link> }  
             { this.state.currentUser && this.state.currentUser.role && <NavLink to="/landing"> Landing </NavLink> }
-            { this.state.currentUser && this.state.currentUser.role && <NavLink to="/account"> Account </NavLink> }
+            { this.state.currentUser && this.state.currentUser.role && 
+            //  <NavLink to="/account"> Account </NavLink>
+             
+             <NavLink to={{
+                pathname: `/account`,
+                state: {
+                  currentUser: {
+                    userId: this.state.currentUser._id,
+                    fullName: this.state.currentUser.fullName,
+                    email: this.state.currentUser.email,
+                    role: this.state.currentUser.role
+                  }
+                }
+              }}> Account </NavLink>
+            
+            }
             
             </div>
           </nav>
         </header>
+
         <Switch>
         {/* this is example how we would render component normally */}
         {/* <Route exact path="/somePage" component={ someComponentThatWillRenderWhenThisRouteIsHit }   /> */}
           <Route exact path="/" component={ Home }   /> 
+
+          {/* <Redirect to='/' component={Home}/> */}
 
           {/* if we have to pass some props down to a component,
           we can't use a standard way of rendering using component={},
@@ -112,12 +148,14 @@ class App extends React.Component {
             /> 
           }/>}
 
-          <Route exact path="/account" render = { () => 
-            <Account 
+          <Route exact path="/account" component = {Account}/>
+
+          {/* {<Route exact path="/account" render = { () => 
+            <Account
               currentUser = { this.state.currentUser }   
               onUserChange = { userDoc => this.syncCurrentUser(userDoc) }   
             /> 
-          }/>
+          }/>} */}
           
           <Route exact path="/setup/admin" component={ NewSchool }   /> 
           
@@ -130,7 +168,7 @@ class App extends React.Component {
           
           <Route exact path= "/setup/parent" component={ AddClass }/> 
           
-          <Route exact path="/setup/class" component={NewClass}/>
+          <Route exact path="/setup/class" component={ NewClass }/>
 
           {<Route exact path="/setup/admin" render = { () => 
             <NewSchool
@@ -141,13 +179,13 @@ class App extends React.Component {
 
           <Route exact path="/school/details/:schoolId" component = {SchoolBox} /> 
         
-          <Route exact path="/class/details/:classlId" component = {ClassBox} /> 
+          <Route exact path="/class/details/:classlId" component = {ClassDetails} /> 
 
 
           {<Route exact path="/landing" render = { () => 
             <Landing
               currentUser = { this.state.currentUser }   
-              // onUserChange = { userDoc => this.syncCurrentUser(userDoc) }   
+              onUserChange = { userDoc => this.syncCurrentUser(userDoc) }   
             /> 
           }/>}  
 
@@ -157,7 +195,7 @@ class App extends React.Component {
 
         </Switch>
           
-          {/* <CountriesList /> */}
+          
       </div>
     );
   }

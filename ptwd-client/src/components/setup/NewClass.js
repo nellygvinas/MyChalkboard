@@ -10,7 +10,8 @@ export default class NewClass extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      classId: "",
+      currentUser: this.props.location.state.currentUser,
+      classId: null,
       className: "",
       teacher: {teacherName: null,
       teacherId: null},
@@ -26,13 +27,18 @@ export default class NewClass extends React.Component {
     }
 
     componentDidMount(){
-      console.log("This is a new class");
-      console.log("School props: ", this.props.location.state)
+      console.log("Props from new class component on mount: ", this.props)
     }
 
 
+    syncCurrentTeacher(teacherData){
+      this.setState({ teacher: teacherData })
+    }
+
+
+
     genericSync(event){
-      console.log("The event.target is: ", event.target.value)
+      // console.log("The event.target is: ", event.target.value)
       const { name, value } = event.target;
       this.setState({ [name]: value });
     }
@@ -58,24 +64,25 @@ export default class NewClass extends React.Component {
               console.log("Class found: ", responseForGetClass.data)
               
 
-              this.setState({ classId: responseForGetClass.data.classFound._id, classCode: responseForGetClass.data.classFound.classCode, classAdded: true, 
+              this.setState({ classId: responseForGetClass.data.classFound._id, classCode: responseForGetClass.data.classFound.classCode, 
               creator: responseForGetClass.data.classFound.creator }, 
               () => {
                 console.log("State after post, class added and creator assigned:", this.state)
-            });
+              })
 
               })
             .catch(err => console.log("Err while searching for class: ", err))
 
         })
         .catch( err => console.log("Err in class setup: ", err));
-  }
+        
+        this.setState({ classAdded: true}, 
+          () => {
+            console.log("State after post, class added and creator assigned:", this.state)
+          })
 
-
-
-    syncCurrentTeacher(teacherData){
-      this.setState({ teacher: teacherData })
     }
+    // end of handle submit
 
 
 
@@ -102,9 +109,10 @@ export default class NewClass extends React.Component {
                     <button> Create Class </button>
               </form>
 
-              {this.state.classAdded && <div><h3> You created a new class: </h3>
+              {this.state.classAdded && this.state.classId && <div><h3> Your class: </h3>
                   
                 <ClassBox 
+                  currentUser = {this.props.location.state.currentUser}
                   classId ={this.state.classId}
                   className = {this.state.className}
                   classCode = {this.state.classCode}

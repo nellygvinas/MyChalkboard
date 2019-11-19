@@ -31,7 +31,20 @@ export default class Landing extends React.Component {
       console.log("Props on Landing mount: ", this.props )
       console.log("State of Landing component on mount: ", this.state)
 
-      
+      // axios.get(`${process.env.REACT_APP_API_URL}/checkuser`, { withCredentials: true })
+      // .then( responseFromTheBackend => {
+      //   console.log("User in LANDING: ", responseFromTheBackend)
+      //   const { userDoc } = responseFromTheBackend.data;
+      //   this.props.onUserChange(userDoc);
+      //   console.log("userDoc from landing:", userDoc);
+
+      // })
+      // .catch(err => {
+      //   console.log("Err while getting the user from the checkuser route: ", err)})
+
+
+
+  
     }
 
 
@@ -45,7 +58,7 @@ export default class Landing extends React.Component {
           <h2>YOUR LANDING PAGE </h2> 
 
 
-          {this.props.currentUser && this.props.currentUser.role == "Admin" && 
+          {this.props.currentUser.role == "Admin" && 
           
             <div>
             <AdminLanding
@@ -55,7 +68,7 @@ export default class Landing extends React.Component {
           
           }
 
-          {this.props.currentUser && this.props.currentUser.role == "Teacher" && 
+          {this.props.currentUser.role == "Teacher" && 
            <div>
              TEACHER LANDING 
            </div>
@@ -63,13 +76,13 @@ export default class Landing extends React.Component {
           }
 
 
-          {this.props.currentUser && this.props.currentUser.role == "Parent" && 
+          {this.props.currentUser.role == "Parent" && 
            <div>
              PARENT LANDING PAGE
            </div>
           } 
 
-          {this.props.currentUser && this.props.currentUser.role == "Unassigned" && 
+          {this.props.currentUser.role == "Unassigned" && 
            <div>
              Please complete setup
 
@@ -78,8 +91,7 @@ export default class Landing extends React.Component {
             />         
             
 
-           </div>
-          } 
+           </div>} 
                 
 
 

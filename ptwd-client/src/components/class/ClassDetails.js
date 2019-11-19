@@ -3,37 +3,23 @@ import axios from "axios";
 // import { Switch, Route, NavLink, Link } from "react-router-dom";
 import AddTeacher from "../setup/AddTeacher"
 
-export default class ClassBox extends React.Component {
+export default class ClassDetails extends React.Component {
 
   constructor(props){
     super(props);
     this.state = {
-      // currentUser: "",
-      // classId: "",
-      // className: "",
-      // teacher: "",      
-      //   teacherId: "",
-      // teacherAdded: "",
-      // schoolName: "",
-      // schoolId: "",
-      // classCode: "",
-      // creator: "",
-      // parents: "",
-      // showEditButton: "",
-      // showEditForm: "",
-
-      currentUser: this.props.currentUser,
-      classId: this.props.classId,
-      className: this.props.className,
+      currentUser: this.props.location.state.currentUser,
+      classId: this.props.location.state.classId,
+      className: this.props.location.state.className,
       teacher: {
-        teacherName: this.props.teacherName,
-        teacherId: this.props.teacherId},
+        teacherName: this.props.location.state.teacherName,
+        teacherId: this.props.location.state.teacherId},
       teacherAdded: false,
-      schoolName: this.props.schoolName,
-      schoolId: this.props.schoolId,
-      classCode: this.props.classCode,
-      creator: this.props.creator,
-      parents: this.props.parents,
+      schoolName: this.props.location.state.schoolName,
+      schoolId: this.props.location.state.schoolId,
+      classCode: this.props.location.state.classCode,
+      creator: this.props.location.state.creator,
+      parents: this.props.location.state.parents,
       showEditButton: false,
       showEditForm: false
     }
@@ -42,8 +28,8 @@ export default class ClassBox extends React.Component {
 
     componentDidMount(){
 
-      console.log("Props on ClassBox mount: ", this.props )
-      console.log("State of ClassBox component on mount: ", this.state)
+      console.log("Props on ClassDetails mount: ", this.props )
+      console.log("State of ClassDetails component on mount: ", this.state)
 
       if (this.state.currentUser.role == "Admin" || this.state.currentUser.role == "Teacher") {
         this.setState({showEditButton:true}, () => {console.log("State after edit form condition:", this.state)}

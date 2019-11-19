@@ -47,12 +47,14 @@ export default class AdminLanding extends React.Component {
           <div className="schoollist">
             <SchoolList
             currentUser={this.props.currentUser}
+            // onUserChange = { userDoc => this.syncCurrentUser(userDoc) }
             ></SchoolList>
           </div>
 
           <div className="classlist">
             <ClassList
             currentUser={this.props.currentUser}
+            // onUserChange = { userDoc => this.syncCurrentUser(userDoc) }
             ></ClassList>
           </div>
 

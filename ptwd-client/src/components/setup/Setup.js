@@ -26,7 +26,7 @@ export default class Setup extends React.Component {
     }
 
     shouldComponentUpdate() {
-      console.log("Setup component - state upon update", this.state)
+      
 
     }
 

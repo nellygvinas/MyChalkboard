@@ -18,7 +18,9 @@ export default class SchoolList extends React.Component {
       schoolId: "",
       allSchools: null,
       visibleSchools: null,
-      message: null
+      message: null,
+      schoolCount: 0,
+      needsSchool: false
     }
   }
 
@@ -30,14 +32,47 @@ export default class SchoolList extends React.Component {
 
       axios.get(`${process.env.REACT_APP_API_URL}/getschools/`+this.props.currentUser._id, { withCredentials: true })
       .then( responseFromTheBackend => {
+        
         console.log("Schools found: ", responseFromTheBackend.data.schoolsFound)
         this.setState({ allSchools: responseFromTheBackend.data.schoolsFound }, () => {
           console.log("State after schools Found:", this.state)}
           );
 
-        })
+        // axios.get(`${process.env.REACT_APP_API_URL}/checkuser`, { withCredentials: true })
+        // .then( responseFromTheBackend => {
+        //   const { userDoc } = responseFromTheBackend.data;
+        //   this.props.onUserChange(userDoc);
+        //   console.log("userDoc from schoollist:", userDoc);
+        // })
+        // .catch(err => {
+        //   this.setState({ redirect: true }, () => {console.log("State after user not found:", this.state.currentUser)})
+        //   console.log("Err while getting the user from the checkuser route: ", err)})
+      
+      })
       .catch(err => console.log("Err while searching for teacher: ", err))
+
+
+      // {this.getSchoolCount()};
+
     }
+
+
+    // shouldComponentUpdate(){
+
+    //   axios.get(`${process.env.REACT_APP_API_URL}/getschools/`+this.props.currentUser._id, { withCredentials: true })
+    //   .then( responseFromTheBackend => {
+    //     console.log("Schools found: ", responseFromTheBackend.data.schoolsFound)
+    //     this.setState({ allSchools: responseFromTheBackend.data.schoolsFound }, () => {
+    //       console.log("State after schools Found in should component update:", this.state)}
+    //       );
+
+    //     })
+    //   .catch(err => console.log("Err while searching for teacher: ", err))
+
+
+    // }
+
+
 
 
     showFoundSchools = () =>{
@@ -45,7 +80,7 @@ export default class SchoolList extends React.Component {
 
       return this.state.allSchools.map((eachSchool, index)=>{
   
-      
+       
         return( 
         
         <div key={index}>  
@@ -111,8 +146,31 @@ export default class SchoolList extends React.Component {
   
     }
 
+    checkIfTeacher(){
+      let schoolArrayLength = this.state.allSchools.length
+
+      if (schoolArrayLength < 1) {
+
+      } else {
+
+      }
+
+    }
+
+    getSchoolCount(){
+      
+      this.setState({schoolCount: this.state.allSchools.length})
+      
+      if (this.state.schoolCount < 1){
+        this.setState({needsSchool: true})
+      }
+    }
+
 
     render(){
+
+
+  
 
       return (
         
@@ -123,7 +181,7 @@ export default class SchoolList extends React.Component {
             
           </div>
 
-        {!this.state.allSchools || this.state.allSchools.length == 0 && <div>
+        {!this.state.allSchools && <div>
 
         <h3>Add School to get started</h3>
 
@@ -142,7 +200,21 @@ export default class SchoolList extends React.Component {
         </div>}
 
 
-         {this.state.allSchools && <div> {this.showFoundSchools()} </div>}    
+         {this.state.allSchools && <div> {this.showFoundSchools()} 
+         
+         <Link to={{
+            pathname: '/setup/admin',
+            state: {
+              currentUser: {
+                userId: this.props.currentUser._id,
+                fullName: this.props.currentUser.fullName,
+                email: this.props.currentUser.email,
+                role: "Admin"
+              }
+            }}
+            }> Add School </Link>
+
+         </div>}    
 
 
 

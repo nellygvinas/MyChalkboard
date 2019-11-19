@@ -38,7 +38,7 @@ export default class Signup extends React.Component {
         .then( responseFromServer => {
             const { userDoc } = responseFromServer.data;
             this.props.onUserChange(userDoc);
-            console.log("userDoc from signup:", userDoc);
+            console.log("userDoc from delete user account:", userDoc);
         })
         .catch( err => console.log("Err in signup: ", err));
     }
@@ -48,7 +48,8 @@ export default class Signup extends React.Component {
         // console.log("The current user's role:", this.props.currentUser[0])
         // const userProps = {fullName: this.props.currentUser.fullName, email: this.props.currentUser.email, role: this.props.currentUser.role};
         const { fullName, email, password, role } = this.state;
-        console.log("SIGNUP STATE: ", this.state);
+        
+        
         if(this.props.currentUser){
             return(
             

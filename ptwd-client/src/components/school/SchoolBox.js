@@ -19,7 +19,8 @@ export default class SchoolBox extends React.Component {
       city: this.props.location.state.city,
       state: this.props.location.state.state,
       zip: this.props.location.state.zip,
-      showEditForm: false
+      showEditForm: false,
+      message: null
     }
   }
 
@@ -77,6 +78,51 @@ export default class SchoolBox extends React.Component {
     }
 
 
+    deleteSchool(event){
+      
+      window.confirm("Please confirm that you wish to delete this school before proceeding. All school data and classes will be removed.")
+      
+      event.preventDefault();
+      
+      axios.post(`${process.env.REACT_APP_API_URL}/school/delete/`+this.state.schoolId, { withCredentials: true })
+      .then( responseFromServer => {
+        
+        let deletedSchoolId = responseFromServer.data.deletedSchool._id
+        console.log("School deleted: ", responseFromServer.data.deletedSchool)   
+
+        this.setState({message: "The school and all associated data have been removed."})
+
+
+        axios.post(`${process.env.REACT_APP_API_URL}/classes/delete/`+deletedSchoolId, { withCredentials: true })
+        .then( responseAfterClasses => {
+        
+          console.log("Classes found for school: ", responseAfterClasses.data.foundClasses)
+          console.log("Classes deleted: ", responseAfterClasses.data.deletedClasses)   
+
+         let classesArray = responseAfterClasses.data.foundClasses
+
+         return classesArray.map((eachClass, index)=>{
+              
+              axios.post(`${process.env.REACT_APP_API_URL}/postings/delete/`+eachClass._id, { withCredentials: true })
+              .then( responseAfterClasses => {
+            
+              console.log("Postings found for deleted classes: ", responseAfterClasses.data.foundPosts)
+              console.log("Postings deleted: ", responseAfterClasses.data.deletedPosts)   
+  
+
+             
+          
+            })
+           .catch( err => console.log("Err in delete: ", err))
+
+          })
+       })
+      .catch( err => console.log("Err in delete: ", err))
+       })
+      .catch( err => console.log("Err in delete: ", err))
+   }
+
+
 
 
 
@@ -106,6 +152,10 @@ export default class SchoolBox extends React.Component {
 
           <div>
           <button onClick={this.toggleEditForm}>Edit School</button>  
+          </div>
+
+          <div>
+          <button onClick={event => this.deleteSchool(event)}>Delete School</button>
           </div>
 
           {this.state.showEditForm && 
@@ -158,16 +208,14 @@ export default class SchoolBox extends React.Component {
                     placeholder={this.state.zip}
                 />
 
-
-
                 <button> Update School Details </button>
             </form>
 
             {/* if the message is not null (basically if there's a message) then show it in this <div> tag */}
-            { this.state.message && <div> { this.state.message } </div> }
         
         </section>}
 
+            { this.state.message && <div> { this.state.message } </div> }
 
             
       
