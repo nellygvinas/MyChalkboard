@@ -4,13 +4,14 @@ import axios from "axios";
 import AddTeacher from "../setup/AddTeacher"
 import SchoolList from "../school/SchoolList"
 import ClassList from "../class/ClassList"
+import Posting from "../posts/Posting"
 
-export default class AdminLanding extends React.Component {
+export default class TeacherLanding extends React.Component {
 
   constructor(props){
     super(props);
     this.state = {
-      classId: this.props.classId,
+      classId: "",
       className: "",
       teacher: {
         teacherName: "",
@@ -28,9 +29,8 @@ export default class AdminLanding extends React.Component {
 
     componentDidMount(){
 
-      console.log("Props on AdminLanding mount: ", this.props )
-      console.log("State of AdminLanding component on mount: ", this.state)
-
+      console.log("Props on TeacherLanding mount: ", this.props )
+      console.log("State of TeacherLanding component on mount: ", this.state)
       
     }
 
@@ -42,24 +42,30 @@ export default class AdminLanding extends React.Component {
         <div>
 
           <div>
-          <h2> ADMIN LANDING PAGE </h2> 
+          <h2> Teacher LANDING PAGE </h2> 
 
-
-          <div className="schoollist">
-            <SchoolList
-            currentUser={this.props.currentUser}
-            allClasses={this.props.allClasses}
-            // onUserChange = { userDoc => this.syncCurrentUser(userDoc) }
-            ></SchoolList>
-          </div>
 
           <div className="classlist">
             <ClassList
             currentUser={this.props.currentUser}
-            allClasses={this.props.allClasses}
+            allClasses={this.state.allClasses}
             // onUserChange = { userDoc => this.syncCurrentUser(userDoc) }
             ></ClassList>
+
           </div>
+
+          <div>
+            <Posting
+            allClasses={this.state.allClasses}
+            currentUser={this.props.currentUser}
+            // classId={this.props.classId} 
+            >
+
+              POSTING LIST
+            </Posting>
+
+          </div>
+
 
 
           </div>

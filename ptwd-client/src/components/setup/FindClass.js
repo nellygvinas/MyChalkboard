@@ -10,70 +10,110 @@ export default class FindClass extends React.Component {
   constructor(props){
     super(props);
     this.state = {
+      currentUser: {
+        userId: this.props.location.state.currentUser.userId,
+        fullName: this.props.location.state.currentUser.fullName,
+        email: this.props.location.state.currentUser.email,
+        role: this.props.location.state.currentUser.role,
+      },
+      classCode: null,
+      classFound: false,
       classId: "",
       className: "",
-      teacher: {teacherName: null,
-      teacherId: null},
+      teacher: {
+        teacherName: null,
+        teacherId: null
+      },
       schoolName: "",
       schoolId: "",
-      classCode: null,
       creator: "",
       image: "",
       parents: [],
-      message: null,
-      classAdded: false
+      message: null
       }
     }
 
     componentDidMount(){
-      console.log("Find class component");
+      console.log("Props - Find class component on mount: ", this.props);
+      console.log("state on find class component on mount:", this.state)
+
+      axios.put(
+        // route we are hitting in the backend
+        `${process.env.REACT_APP_API_URL}/setup/role`,
+        // the data from the form (AKA req.body 🚀) that we are sending to this route to do the job
+        this.state.currentUser,
+        // secure sending
+        { withCredentials: true }
+      )
+      .then( responseFromServer => {
+          console.log("Response from server after role post is:", responseFromServer.data);
       
+          axios.get(`${process.env.REACT_APP_API_URL}/setup/role/`+this.state.currentUser.userId, { withCredentials: true })
+          .then( responseFromTheBackend => {
+            console.log("User found after role assigned: ", responseFromTheBackend.data.theUpdatedUser)
+            this.setState({ currentUser: {role: responseFromTheBackend.data.theUpdatedUser }}, () => {
+              console.log("State after role assigned:", this.state)}
+              );
+    
+            })
+          .catch(err => console.log("Err while searching for teacher: ", err))
+      
+      })
+      .catch( err => console.log("Err in role setup: ", err)); 
+
+
+
     }
 
 
     genericSync(event){
       console.log("The event.target is: ", event.target.value)
       const { name, value } = event.target;
-      this.setState({ [name]: value });
+      this.setState({ [name]: value }, ()=>console.log("State as changing: ", this.state));
     }
 
-    handleSubmit (event){
+    findClass (event){
       event.preventDefault();
-      console.log("Form submitted. State is:", this.state);
+      event.target.value = "";
 
-        axios.post(
+      console.log("Form for findclass submitted. State is:", this.state);
+
+        axios.get(
             // route we are hitting in the backend
-            `${process.env.REACT_APP_API_URL}/setup/class`,
-            // the data from the form (AKA req.body 🚀) that we are sending to this route to do the job
-            this.state,
+            `${process.env.REACT_APP_API_URL}/classinfo/code/`+this.state.classCode,
             // secure sending
             { withCredentials: true }
         )
         .then( responseFromServer => {
 
-            let newClassId = responseFromServer.data.newClass._id
-
-            axios.get(`${process.env.REACT_APP_API_URL}/classinfo/`+newClassId, { withCredentials: true })
-            .then( responseForGetClass => {
-              console.log("Class found: ", responseForGetClass.data)
+           
+              console.log("Class found: ", responseFromServer.data)
               
 
-              this.setState({ classId: responseForGetClass.data.classFound._id, classCode: responseForGetClass.data.classFound.classCode, classAdded: true, 
-              creator: responseForGetClass.data.classFound.creator }, 
+              this.setState({ 
+                classCode: responseFromServer.data.classFound.classCode, 
+                classFound: true,
+                classId: responseFromServer.data.classFound._id, 
+                className: responseFromServer.data.classFound.className,
+                teacher: {
+                  teacherName: responseFromServer.data.classFound.teacher.teacherName,
+                  teacherId: responseFromServer.data.classFound.teacher.teacherId
+                },
+                schoolName: responseFromServer.data.classFound.schoolName,
+                schoolId: responseFromServer.data.classFound.schoolId,
+                creator: responseFromServer.data.classFound.creator,
+                image: "",
+                parents: responseFromServer.data.classFound.parents,
+                message: null
+              }, 
               () => {
-                console.log("State after post, class added and creator assigned:", this.state)
-            });
-
+                console.log("State after class found:", this.state)
               })
-            .catch(err => console.log("Err while searching for class: ", err))
+            })
+        .catch( err => console.log("Err in class find ", err));
 
-
-
-
-
-        })
-        .catch( err => console.log("Err in class setup: ", err));
-  }
+        
+        }
 
 
 
@@ -90,21 +130,48 @@ export default class FindClass extends React.Component {
       return (
         <div>
 
-          <div>
+  
 
-          <h4 className="title"> Find School or Class</h4>
-          <label>Search:</label><input onChange={this.search}
-          value={this.state.searchTerm}>
-          </input>
+          <h4 className="title"> Find Class</h4>
+          <label>Search by class code to add yourself as teacher.</label>
+          
+          <form onSubmit = {event => this.findClass(event)} >  
 
-          {this.state.visibleUsers && <div>
+            <input
+                //  value={this.state.classCode} // this.state.fullName
+                 onChange = { event => this.genericSync(event) } 
+                 type="text"
+                 name="classCode"
+                 placeholder="Your class code"
+             />
 
-            <h4>Found users:</h4> 
-            {this.showFoundUsers()}
-          </div>}
 
+          <button>Find class </button>
+          </form>
 
-          </div>
+          
+
+            <h4>Found class:</h4> 
+           
+            {this.state.classFound && <div>
+
+              <ClassBox 
+                  currentUser = {this.state.currentUser}
+                  classId ={this.state.classId}
+                  className = {this.state.className}
+                  classCode = {this.state.classCode}
+                  teacherName = {this.state.teacher.teacherName}
+                  teacherId = {this.state.teacher.teacherId}
+                  schoolName = {this.state.schoolName}
+                  schoolId = {this.state.schoolId}
+                  creator = {this.state.creator}
+                  parents = {this.state.parents}
+                  />
+                  
+              
+            </div>}
+
+          
                 
                 
                 {/* if the message is not null (basically if there's a message) then show it in this <div> tag */}
@@ -112,8 +179,9 @@ export default class FindClass extends React.Component {
           
 
 
+        {/* end of containing div */}
+        
         </div>    
-        // end of containing div
 
 
       )

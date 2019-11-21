@@ -32,21 +32,6 @@ export default class Role extends React.Component {
     // console.log("submitting form");
     event.preventDefault();
 
-    // axios.post(
-    //     // route we are hitting in the backend
-    //     `${process.env.REACT_APP_API_URL}/signup`,
-    //     // the data from the form (AKA req.body 🚀) that we are sending to this route to do the job
-    //     this.state,
-    //     // secure sending
-    //     { withCredentials: true }
-    // )
-    // .then( responseFromServer => {
-    //     // console.log("response is:", responseFromServer);
-    //     const { userDoc } = responseFromServer.data;
-    //     this.props.onUserChange(userDoc);
-    // })
-    // .catch( err => console.log("Err in signup: ", err));
-
     } //end of handleSubmit
 
 

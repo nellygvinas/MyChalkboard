@@ -5,6 +5,7 @@ import Setup from "../setup/Setup"
 import AddTeacher from "../setup/AddTeacher"
 import SchoolList from "../school/SchoolList"
 import AdminLanding from "./AdminLanding"
+import TeacherLanding from "./TeacherLanding"
 
 export default class Landing extends React.Component {
 
@@ -22,25 +23,22 @@ export default class Landing extends React.Component {
       classCode: "",
       creator: "",
       parents: [],
+      allClasses: null
     }
   }
 
 
     componentDidMount(){
 
-      console.log("Props on Landing mount: ", this.props )
-      console.log("State of Landing component on mount: ", this.state)
+      axios.get(`${process.env.REACT_APP_API_URL}/getclasses/`+this.props.currentUser._id,{ withCredentials: true })
+      .then( responseFromTheBackend => {
+        console.log("Classes found: ", responseFromTheBackend.data.classesFound)
+        this.setState({ allClasses: responseFromTheBackend.data.classesFound}, () => {
+          console.log("State after classes Found:", this.state)}
+          );
 
-      // axios.get(`${process.env.REACT_APP_API_URL}/checkuser`, { withCredentials: true })
-      // .then( responseFromTheBackend => {
-      //   console.log("User in LANDING: ", responseFromTheBackend)
-      //   const { userDoc } = responseFromTheBackend.data;
-      //   this.props.onUserChange(userDoc);
-      //   console.log("userDoc from landing:", userDoc);
-
-      // })
-      // .catch(err => {
-      //   console.log("Err while getting the user from the checkuser route: ", err)})
+        })
+      .catch(err => console.log("Err while searching for classes: ", err))
 
 
 
@@ -49,6 +47,10 @@ export default class Landing extends React.Component {
 
 
     render(){
+
+      if (!this.state.allClasses) {
+        return <div />
+      }
 
       return (
         
@@ -63,6 +65,7 @@ export default class Landing extends React.Component {
             <div>
             <AdminLanding
             currentUser={this.props.currentUser}
+            allClasses={this.state.allClasses}
             ></AdminLanding>
             </div>
           
@@ -70,7 +73,10 @@ export default class Landing extends React.Component {
 
           {this.props.currentUser.role == "Teacher" && 
            <div>
-             TEACHER LANDING 
+             <TeacherLanding
+            currentUser={this.props.currentUser}
+            allClasses={this.state.allClasses}
+            ></TeacherLanding>
            </div>
 
           }

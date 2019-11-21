@@ -45,7 +45,7 @@ export default class ClassBox extends React.Component {
       console.log("Props on ClassBox mount: ", this.props )
       console.log("State of ClassBox component on mount: ", this.state)
 
-      if (this.state.currentUser.role == "Admin" || this.state.currentUser.role == "Teacher") {
+      if (this.state.currentUser.role !== "Parent") {
         this.setState({showEditButton:true}, () => {console.log("State after edit form condition:", this.state)}
           )
         }

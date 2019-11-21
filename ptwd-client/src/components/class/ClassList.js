@@ -10,9 +10,11 @@ export default class ClassList extends React.Component {
     super(props);
     this.state = {
       classId: "",
-      allClasses: null,
+      allClasses: this.props.allClasses,
       visibleClasses: null,
-      message: null
+      schools: [],
+      message: null,
+      showTeacherSchools: false,
     }
   }
 
@@ -22,15 +24,15 @@ export default class ClassList extends React.Component {
       console.log("Props on ClassList mount: ", this.props )
       console.log("State of ClassList component on mount: ", this.state)
 
-      axios.get(`${process.env.REACT_APP_API_URL}/getclasses/`+this.props.currentUser._id, { withCredentials: true })
-      .then( responseFromTheBackend => {
-        console.log("Classes found: ", responseFromTheBackend.data.classesFound)
-        this.setState({ allClasses: responseFromTheBackend.data.classesFound }, () => {
-          console.log("State after classes Found:", this.state)}
-          );
+      // axios.get(`${process.env.REACT_APP_API_URL}/getclasses/`+this.props.currentUser._id,{ withCredentials: true })
+      // .then( responseFromTheBackend => {
+      //   console.log("Classes found: ", responseFromTheBackend.data.classesFound)
+      //   this.setState({ allClasses: responseFromTheBackend.data.classesFound, showTeacherSchools: true }, () => {
+      //     console.log("State after classes Found:", this.state)}
+      //     );
 
-        })
-      .catch(err => console.log("Err while searching for classes: ", err))
+      //   })
+      // .catch(err => console.log("Err while searching for classes: ", err))
     }
 
 
@@ -90,7 +92,36 @@ export default class ClassList extends React.Component {
     }
 
 
+    showTeacherSchools = () =>{
+
+      console.log("show schools for teacher")
+      
+      return this.state.allClasses.map((eachClass, index)=>{
+  
+        this.state.schools.push(eachClass.schoolName)
+
+        return( 
+        
+        <div key={index}>  
+        <div>
+        <label>School: </label> {eachClass.schoolName}
+        </div>
+
+        </div>  
+    
+        )
+  
+      })
+  
+    }
+
+
+
+
+
     render(){
+
+
 
       return (
         
@@ -110,6 +141,14 @@ export default class ClassList extends React.Component {
 
 
          {this.state.allClasses && <div> {this.showFoundClasses()} </div>}    
+
+         {this.state.showTeacherSchools && <div>
+           
+           Classes for teacher
+           
+           {this.showTeacherSchools()}
+           
+           </div>}
 
 
 

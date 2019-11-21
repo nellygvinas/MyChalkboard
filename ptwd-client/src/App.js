@@ -159,12 +159,7 @@ class App extends React.Component {
           
           <Route exact path="/setup/admin" component={ NewSchool }   /> 
           
-          <Route exact path= "/setup/teacher" render={props =>
-              <div>
-              <FindClass 
-                currentUser = { this.state.currentUser }   />
-            </div>
-           }/> 
+          <Route exact path= "/setup/teacher" component={ FindClass } /> 
           
           <Route exact path= "/setup/parent" component={ AddClass }/> 
           

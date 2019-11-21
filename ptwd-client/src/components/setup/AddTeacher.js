@@ -100,22 +100,8 @@ export default class AddTeacher extends React.Component {
             })
             .catch(err => console.log("Err while updating class: ", err))
           
-          
-          
-          
-          
-          
-          
-          
+        
           }) 
-
-
-          
-
-
-    
-      
-      
 
     }
       
