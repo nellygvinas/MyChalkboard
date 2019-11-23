@@ -133,7 +133,7 @@ export default class File extends React.Component {
     renderFiles(files){
               
       return files.map((file,index) => {
-        return  <iframe key={index} title={index} src={file} width="33%" height="100px"/>
+        return  <iframe key={index} title={index} src={file} width="50%" height="100px"/>
     
      });
 
