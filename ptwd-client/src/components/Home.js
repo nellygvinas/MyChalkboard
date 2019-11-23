@@ -1,4 +1,5 @@
 import React from "react";
+import { Switch, Route, NavLink, Link, Redirect } from "react-router-dom";
 
 
 export default class Home extends React.Component {
@@ -6,8 +7,8 @@ export default class Home extends React.Component {
     render(){
         return (
             <section>
-                <h1> Home Page </h1>
-                <p> Welcome to the best app ever! <span role="img" aria-label="heart">❤️</span> </p>
+            <NavLink id="home" className="navbar-brand" to="/login" > <img className="img-responsive" src="logo.png" style={{width: '450px',height: '150px'}}/> 
+            </NavLink>
             </section>
         )
     }
