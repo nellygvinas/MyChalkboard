@@ -124,7 +124,7 @@ class App extends React.Component {
             { !this.state.currentUser && <NavLink className="nav-link" to="/signup"> Signup </NavLink> }
               </li>
               <li className="nav-item">
-            { !this.state.currentUser && <div> <NavLink to="/login"> Login </NavLink> </div> }
+            { !this.state.currentUser && <div> <NavLink class="nav-link" to="/login"> Login </NavLink> </div> }
               </li>
 
             {/* If current user is signed in, Nav will show: */}
