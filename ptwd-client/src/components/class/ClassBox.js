@@ -150,7 +150,7 @@ export default class ClassBox extends React.Component {
 
         <div>
 
-          {/* If teacher is assigned anduser is Admin or Teacher, allow these components to be seen */}
+          {/* If teacher is assigned and user is Admin or Teacher, allow these components to be seen */}
           {this.state.teacher.teacherName && this.state.showEditButton && <div>
             
             <button onClick={this.toggleEditForm}>Edit Class</button>

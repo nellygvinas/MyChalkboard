@@ -1,7 +1,9 @@
 import React from "react";
-import axios from "axios";
-import { Switch, Route, NavLink, Link } from "react-router-dom";
-import ClassBox from "./ClassBox"
+// import axios from "axios";
+import { 
+  // Switch, Route, NavLink, 
+  Link } from "react-router-dom";
+// import ClassBox from "./ClassBox"
 
 
 export default class ClassList extends React.Component {
@@ -132,7 +134,7 @@ export default class ClassList extends React.Component {
             
           </div>
 
-          {!this.state.allClasses || this.state.allClasses.length == 0 && <div>
+          {!this.state.allClasses || this.state.allClasses.length === 0 && <div>
 
           <h3>Add a Class to a School to get Started</h3>
 

@@ -31,7 +31,7 @@ export default class ClassDetails extends React.Component {
       console.log("Props on ClassDetails mount: ", this.props )
       console.log("State of ClassDetails component on mount: ", this.state)
 
-      if (this.state.currentUser.role == "Admin" || this.state.currentUser.role == "Teacher") {
+      if (this.state.currentUser.role === "Admin" || this.state.currentUser.role === "Teacher") {
         this.setState({showEditButton:true}, () => {console.log("State after edit form condition:", this.state)}
           )
         }

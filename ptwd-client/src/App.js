@@ -18,6 +18,7 @@ import Landing from "./components/landing/Landing"
 import SchoolBox from './components/school/SchoolBox';
 import ClassBox from "./components/class/ClassBox"
 import ClassDetails from "./components/class/ClassDetails"
+import PostDetails from "./components/posts/PostDetails"
 
 
 
@@ -184,7 +185,8 @@ class App extends React.Component {
             /> 
           }/>}  
 
-          
+          <Route exact path="/post/details/:postId" component = {PostDetails} />
+
 
           
 

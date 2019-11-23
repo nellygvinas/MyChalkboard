@@ -1,6 +1,6 @@
 import React from "react";
-import axios from "axios";
-import { Switch, Route, NavLink, Link } from "react-router-dom";
+// import axios from "axios";
+// import { Switch, Route, NavLink, Link } from "react-router-dom";
 
 
 export default class Role extends React.Component {

@@ -1,10 +1,12 @@
 import React from "react";
 import axios from "axios";
 // import { Switch, Route, NavLink, Link } from "react-router-dom";
-import AddTeacher from "../setup/AddTeacher"
-import SchoolList from "../school/SchoolList"
+// import AddTeacher from "../setup/AddTeacher"
+// import SchoolList from "../school/SchoolList"
 import ClassList from "../class/ClassList"
 import Posting from "../posts/Posting"
+import File from "../files/File"
+
 
 export default class TeacherLanding extends React.Component {
 
@@ -63,6 +65,17 @@ export default class TeacherLanding extends React.Component {
 
               POSTING LIST
             </Posting>
+
+          </div>
+
+
+          <div>
+            <File
+            currentUser={this.props.currentUser}
+            allClasses={this.state.allClasses}>
+              
+            </File>
+
 
           </div>
 

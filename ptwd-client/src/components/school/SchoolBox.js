@@ -103,23 +103,22 @@ export default class SchoolBox extends React.Component {
 
          return classesArray.map((eachClass, index)=>{
               
-              axios.post(`${process.env.REACT_APP_API_URL}/postings/delete/`+eachClass._id, { withCredentials: true })
+              return axios.post(`${process.env.REACT_APP_API_URL}/postings/delete/`+eachClass._id, { withCredentials: true })
               .then( responseAfterClasses => {
             
               console.log("Postings found for deleted classes: ", responseAfterClasses.data.foundPosts)
               console.log("Postings deleted: ", responseAfterClasses.data.deletedPosts)   
   
+                })
+              .catch( err => console.log("Err in delete: ", err))
 
-             
-          
-            })
-           .catch( err => console.log("Err in delete: ", err))
+              })
 
-          })
-       })
-      .catch( err => console.log("Err in delete: ", err))
-       })
-      .catch( err => console.log("Err in delete: ", err))
+              })
+              .catch( err => console.log("Err in delete: ", err))
+              })
+            .catch( err => console.log("Err in delete: ", err))
+
    }
 
 

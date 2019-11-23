@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 // import { Switch, Route, NavLink, Link } from "react-router-dom";
-import AddTeacher from "../setup/AddTeacher"
+// import AddTeacher from "../setup/AddTeacher"
 import SchoolList from "../school/SchoolList"
 import ClassList from "../class/ClassList"
 

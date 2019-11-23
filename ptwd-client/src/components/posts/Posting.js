@@ -1,9 +1,7 @@
 import React from "react";
 import axios from "axios";
-// import { Switch, Route, NavLink, Link } from "react-router-dom";
-import AddTeacher from "../setup/AddTeacher"
-import SchoolList from "../school/SchoolList"
-import ClassList from "../class/ClassList"
+import { Link } from "react-router-dom";
+import update from 'immutability-helper';
 
 export default class Posting extends React.Component {
 
@@ -18,6 +16,7 @@ export default class Posting extends React.Component {
       creator: "",
       likes: [],
       comments: [],
+      comment: "",
       allPostings: [],
       visiblePostings: null,
       parents: [],
@@ -37,8 +36,10 @@ export default class Posting extends React.Component {
             
             console.log("Postings found for class Id: ", postingsFound.data.posts)
             
-            this.setState({ allPostings: [...this.state.allPostings, ...postingsFound.data.posts ] }, () => {
-              console.log("State after updates:", this.state)}
+            this.setState({ allPostings: [...postingsFound.data.posts] }, () => {
+
+              // ...this.state.allPostings, 
+              console.log("State after get request for postings:", this.state)}
               );  
 
             // this.setState({ myArray: [...this.state.myArray, ...[1,2,3] ] })
@@ -75,12 +76,12 @@ export default class Posting extends React.Component {
       const formData = new FormData();
       
       for(let i = 0, numFiles = this.state.files.length; i < numFiles; i++) {
-      let file = this.state.files[i]   
+      
        formData.append('file', this.state.files[i])
        }
     
       formData.append('creation', this.state.creation)
-      formData.append('description', this.state.creation)
+      formData.append('description', this.state.description)
       
       axios.post(
         // route we are hitting in the backend
@@ -93,20 +94,25 @@ export default class Posting extends React.Component {
       .then( responseFromServer => {
         
          console.log("New post created: ", responseFromServer.data.newPost)
-
-         this.setState({ postId:responseFromServer.data.newPost._id }, ()=>{console.log("state after new post created: ", this.state)})
-
-          // axios.get(`${process.env.REACT_APP_API_URL}/posting/`+this.state.classId, { withCredentials: true })
-          // .then( updatedClass => {
-          //   console.log("Class found after edit: ", updatedClass.data.classFound)
+         
+ 
+          axios.get(`${process.env.REACT_APP_API_URL}/landing/post/`+responseFromServer.data.newPost._id, { withCredentials: true })
+          .then( addedPost => {
+           
+            console.log("Post created is: ", addedPost.data.thePost)
             
 
-          //   this.setState({ className: updatedClass.data.classFound.className }, () => {
-          //     console.log("State after updates:", this.state)}
-          //     );  
+            this.setState({ postId: addedPost.data.thePost._id }, ()=>{console.log("state after new post created: ", this.state)})
 
-          //   })
-          // .catch(err => console.log("Err while searching for class: ", err))
+
+            this.setState({
+             allPostings: update(this.state.allPostings, {$unshift: [addedPost.data.thePost]}
+            )}, ()=> {console.log("update to postings: ", this.state)})
+
+              
+
+            })
+          .catch(err => console.log("Err while searching for class: ", err))
             
       })
       .catch( err => console.log("Err in class update: ", err));
@@ -124,11 +130,11 @@ export default class Posting extends React.Component {
 
     showLikes(post){
               
-        return  <div>{post.likes.length} liked <br/></div> 
+        return  <div>{post.likes.length} likes <br/></div> 
      
     }
 
-    addLike(post){
+    addLike(post, index){
       
       console.log("the post we are liking is: ", post)
      
@@ -144,10 +150,15 @@ export default class Posting extends React.Component {
         
          console.log("post liked: ", responseFromServer.data.postLiked)
 
-        //  this.setState({ postId:responseFromServer.data.newPost._id }, ()=>{console.log("state after new post created: ", this.state)})
+         this.setState({
+          allPostings: update(this.state.allPostings, {[index]: {likes: {$push: [this.props.currentUser._id]}}}
+         )}, ()=> {console.log("update to postings: ", this.state)})
+        // this.setState({ allPostings:  }, ()=>{console.log("state after new post created: ", this.state)})
+
             
       })
       .catch( err => console.log("Err in class update: ", err));
+
 
 
     }
@@ -167,11 +178,36 @@ export default class Posting extends React.Component {
           <br/>
           {eachPost.class.className}
           <br/>
+          {eachPost.creation}
+          <br/>
           {this.renderPostImages(eachPost.files)}
           <br/>
-          <button onClick={() => this.addLike(eachPost._id)}>Like this Post</button>
+          {eachPost.description}
           <br/>
-          {this.showLikes(eachPost)}
+          <button onClick={() => this.addLike(eachPost._id, index)}>Like this Post</button>
+          <br/>
+
+          {this.showLikes(eachPost, index)}
+
+          <Link to={{
+            pathname: `/post/details/`+eachPost._id,
+            state: {
+              currentUser: {
+                userId: this.props.currentUser._id,
+                fullName: this.props.currentUser.fullName,
+                email: this.props.currentUser.email,
+                role: this.props.currentUser.role
+              },
+                postId: eachPost._id,
+                creator: eachPost.creator.fullName,
+                class: eachPost.class.className,
+                files: eachPost.files,
+                description: eachPost.description,
+                likes: eachPost.likes,
+                comments: eachPost.comments
+             }
+           }}> Add Comment </Link>
+         
           <br/>
         </div>
         )
@@ -193,6 +229,24 @@ export default class Posting extends React.Component {
     }
 
 
+    showComments(){
+
+      return this.state.comments.map((eachComment, index)=>{
+  
+        return( 
+        
+         <div key={index}>
+           {eachComment.creator.fullName}
+
+         </div>  
+
+        )
+  
+      })
+
+    }
+
+
     render(){
 
       return (
@@ -207,14 +261,14 @@ export default class Posting extends React.Component {
 
           <form onSubmit={event => this.submitPostForm(event)} id="postingform" encType="multipart/form-data">
               
-              <label for="class">Select class:</label>
+              <label htmlFor="class">Select class:</label>
               <select onChange={event => this.selectChange(event)}>
                 <option name="class" value=" ">Select a Class</option>
                 {this.showClassesForPost()}
               </select>
               <br/>
               
-              <label for="creation">Post Date:</label>
+              <label htmlFor="creation">Post Date:</label>
               
               <input 
                 type="date" name="creation" 
@@ -224,7 +278,7 @@ export default class Posting extends React.Component {
                 
               <br/>
 
-              <label for="description">Caption:</label>
+              <label htmlFor="description">Caption:</label>
               <input 
                 type="text" 
                 name="description" 
@@ -234,7 +288,7 @@ export default class Posting extends React.Component {
                
               <br/>
 
-              <label for="files">Select Images:</label>
+              <label htmlFor="files">Select Images:</label>
               <input type="file" name="files" multiple onChange = {event => this.handleFiles(event)} 
                 />
 

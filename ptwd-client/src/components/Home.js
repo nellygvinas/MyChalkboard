@@ -7,7 +7,7 @@ export default class Home extends React.Component {
         return (
             <section>
                 <h1> Home Page </h1>
-                <p> Welcome to the best app ever! ❤️ </p>
+                <p> Welcome to the best app ever! <span role="img" aria-label="heart">❤️</span> </p>
             </section>
         )
     }
