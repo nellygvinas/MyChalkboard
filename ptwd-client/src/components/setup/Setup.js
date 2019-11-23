@@ -81,8 +81,7 @@ export default class Setup extends React.Component {
 
       return (
 
-        <div>
-          <h1>SETUP COMPONENT</h1>
+        <div id="setup">
 
            <h2> Welcome, {this.props.currentUser.fullName}! Please select your role: </h2>
           
@@ -119,7 +118,19 @@ export default class Setup extends React.Component {
           </div>
 
           <div>
-          <Link to= "/setup/parent" onClick={this.assignParent}> Parent </Link>
+          <Link to={{
+            pathname: '/setup/parent',
+            state: {
+              currentUser: {
+                userId: this.state.currentUser.userId,
+                fullName: this.props.currentUser.fullName,
+                email: this.props.currentUser.email,
+                role: "Parent"
+              }
+            }}
+            }> Parent </Link>
+
+
           </div>     
            
 

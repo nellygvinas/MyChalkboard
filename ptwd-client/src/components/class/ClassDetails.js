@@ -96,15 +96,15 @@ export default class ClassDetails extends React.Component {
 
       return (
         
-        <div>
+        <div id="class-details">
 
           <div>
-          <h3>Class Name: </h3> 
+          <h3>Class Name: </h3><span>  </span>  
             <h4>{this.state.className}</h4>
           </div>
                 
           <div>
-            <label>Class Code: </label> 
+            <label>Class Code: </label><span>  </span> 
               {this.state.classCode}
           </div>
                 
@@ -114,7 +114,7 @@ export default class ClassDetails extends React.Component {
 
           {/* If no teacher is assigned, and user is Admin or Teacher, allow view of assign teacher */}
           {!this.state.teacher.teacherName && <div> {!this.state.teacher.teacherName} 
-           No Teacher Assigned 
+           <p>No Teacher Assigned </p>
                   
            {this.state.showEditButton && <div>
             <AddTeacher

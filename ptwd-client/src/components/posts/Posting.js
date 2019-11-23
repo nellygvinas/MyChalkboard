@@ -252,9 +252,7 @@ export default class Posting extends React.Component {
       return (
         
         <div>
-
-          <div>
-          <h2> STORY </h2> 
+          <h2> Story </h2> 
 
           Add a New Story
           <br/>
@@ -301,16 +299,7 @@ export default class Posting extends React.Component {
             <h4>Posts</h4>
 
             {this.showPostings()}
-
-
           </div>
-
-
-
-         </div>
-                
-
-
 
        </div>
 

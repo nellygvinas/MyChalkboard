@@ -8,12 +8,59 @@ export default class AddClass extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      class: [],
+      currentUser: {
+        userId: this.props.location.state.currentUser.userId,
+        fullName: this.props.location.state.currentUser.fullName,
+        email: this.props.location.state.currentUser.email,
+        role: this.props.location.state.currentUser.role,
+      },
       classCode: "",
-      message: null,
-      classCodeEntered: false
-      }
+      classFound: false,
+      classId: "",
+      className: "",
+      teacher: {
+        teacherName: null,
+        teacherId: null
+      },
+      schoolName: "",
+      schoolId: "",
+      creator: "",
+      image: "",
+      parents: [],
+      message: null
     }
+   }
+
+
+   componentDidMount(){
+    console.log("Props - Find class component on mount: ", this.props);
+    console.log("state on find class component on mount:", this.state)
+
+    axios.put(
+      // route we are hitting in the backend
+      `${process.env.REACT_APP_API_URL}/setup/role`,
+      // the data from the form (AKA req.body 🚀) that we are sending to this route to do the job
+      this.state.currentUser,
+      // secure sending
+      { withCredentials: true }
+    )
+    .then( responseFromServer => {
+        console.log("Response from server after role post is:", responseFromServer.data);
+    
+        axios.get(`${process.env.REACT_APP_API_URL}/setup/role/`+this.state.currentUser.userId, { withCredentials: true })
+        .then( responseFromTheBackend => {
+          console.log("User found after role assigned: ", responseFromTheBackend.data.theUpdatedUser)
+          this.setState({ currentUser: {role: responseFromTheBackend.data.theUpdatedUser }}, () => {
+            console.log("State after role assigned:", this.state)}
+            );
+  
+          })
+        .catch(err => console.log("Err while searching for teacher: ", err))
+    
+    })
+    .catch( err => console.log("Err in role setup: ", err)); 
+
+  }
 
 
     searchClasses = () =>{
@@ -35,9 +82,9 @@ export default class AddClass extends React.Component {
 
     genericSync(event){
       console.log("Event Target Value: ", event.target.value)
-      // const { name, value } = event.target;
-      this.setState({ [event.target.name]: event.target.value });
-      console.log("The state is", this.state)
+      const { name, value } = event.target;
+      this.setState({ [name]: value }, ()=>console.log("State while changing class code: ", this.state));
+      
     }
 
 
@@ -45,22 +92,16 @@ export default class AddClass extends React.Component {
       console.log("Form submitted");
       event.preventDefault();
 
-      this.setState({ classCodeEntered: true });
-
-      const formClassCode = this.state.classCode
-      console.log("The state is", this.state.classCode)
+      this.setState({ classCodeEntered: true }, ()=>console.log("code entered ", this.state));
 
       axios.get(
           // route we are hitting in the backend
-          `${process.env.REACT_APP_API_URL}/setup/class/code`,
-          // the data from the form (AKA req.body 🚀) that we are sending to this route to do the job
-          formClassCode,
+          `${process.env.REACT_APP_API_URL}/classinfo/`+this.state.classCode,
           // secure sending
           { withCredentials: true }
       )
       .then( responseFromServer => {
           console.log("Class found is:", responseFromServer.data);
-          // const { classesDoc } = responseFromServer.data;
 
           // this.setState({ class: classesDoc });
           
@@ -77,9 +118,9 @@ export default class AddClass extends React.Component {
 
       console.log(this.props)
       return (
-        <div>
+        <div id="add-class">
 
-         <h1>PLEASE ENTER YOUR CLASS CODE</h1> 
+         <h2>Please Enter your Class Code</h2> 
 
               <form onSubmit ={ event => this.handleSubmit(event) } >
             
@@ -103,7 +144,7 @@ export default class AddClass extends React.Component {
                 <h3>Classes Found:</h3>
 
                 <div>
-                  {this.state.class[0]}
+                  
                 </div>
                   
                     

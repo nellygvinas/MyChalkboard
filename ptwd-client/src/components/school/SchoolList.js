@@ -90,7 +90,7 @@ export default class SchoolList extends React.Component {
         
         </div>
         <div>
-        <label>School Address: </label> {eachSchool.address}, {eachSchool.city}, {eachSchool.state}
+        <label>Address: </label> {eachSchool.address}, {eachSchool.city}, {eachSchool.state}
         </div>
         <div>
 
@@ -176,10 +176,7 @@ export default class SchoolList extends React.Component {
         
         <div>
 
-          <div>
-          <h4>YOUR SCHOOLS COMPONENT </h4> 
-            
-          </div>
+        <h4>Your Schools</h4>
 
         {!this.state.allSchools && <div>
 
@@ -202,6 +199,7 @@ export default class SchoolList extends React.Component {
 
          {this.state.allSchools && <div> {this.showFoundSchools()} 
          
+         <div>
          <Link to={{
             pathname: '/setup/admin',
             state: {
@@ -213,7 +211,7 @@ export default class SchoolList extends React.Component {
               }
             }}
             }> Add School </Link>
-
+         </div>
          </div>}    
 
 

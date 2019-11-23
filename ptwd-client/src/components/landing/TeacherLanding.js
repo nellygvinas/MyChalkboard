@@ -6,6 +6,8 @@ import axios from "axios";
 import ClassList from "../class/ClassList"
 import Posting from "../posts/Posting"
 import File from "../files/File"
+import Tabs from "react-bootstrap/Tabs"
+import Tab from "react-bootstrap/Tab"
 
 
 export default class TeacherLanding extends React.Component {
@@ -25,8 +27,11 @@ export default class TeacherLanding extends React.Component {
       creator: "",
       parents: [],
       allClasses: this.props.allClasses,
+      activeTab: props.activeTab || 1
     }
-  }
+      this.handleSelect = this.handleSelect.bind(this);
+    }
+  
 
 
     componentDidMount(){
@@ -36,65 +41,56 @@ export default class TeacherLanding extends React.Component {
       
     }
 
+    handleSelect(selectedTab) {
+      // The active tab must be set into the state so that
+      // the Tabs component knows about the change and re-renders.
+      this.setState({
+        activeTab: selectedTab
+      });
+    }
+
 
     render(){
 
       return (
         
-        <div>
+        <div className="page-landing">
 
-          <div>
-          <h2> Teacher LANDING PAGE </h2> 
-
-
-          <div className="classlist">
+          
+        <div className="container side-bar" id="sidebar">
+          
+          <div className="row justify-content-start">
+          <div className="col-sm align-self-center schoollist">
             <ClassList
             currentUser={this.props.currentUser}
             allClasses={this.state.allClasses}
             // onUserChange = { userDoc => this.syncCurrentUser(userDoc) }
             ></ClassList>
-
+          </div>
           </div>
 
-          <div>
-            <Posting
+        </div>
+
+        <div class ="tab-container">
+          <Tabs activeKey={this.state.activeTab} onSelect={this.handleSelect}>
+            <Tab eventKey={1} title="Story">
+            <Posting activeTab={1}
             allClasses={this.state.allClasses}
             currentUser={this.props.currentUser}
             // classId={this.props.classId} 
             >
-
-              POSTING LIST
             </Posting>
+            </Tab>
 
-          </div>
-
-
-          <div>
-            <File
+          <Tab eventKey={2} title="Files">
+            <File activeTab={2}
             currentUser={this.props.currentUser}
             allClasses={this.state.allClasses}>
-              
             </File>
-
-
-          </div>
-
-
-
-          </div>
-                
-
-
-
+          </Tab>
+          </Tabs>
         </div>
-
-
-      )
-
-
-    }
-
-
-
+      </div>
+      )}
 
   }

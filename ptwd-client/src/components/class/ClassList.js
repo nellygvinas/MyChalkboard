@@ -130,7 +130,7 @@ export default class ClassList extends React.Component {
         <div>
 
           <div>
-          <h4>YOUR CLASSES COMPONENT </h4> 
+          <h4>Your Classes </h4> 
             
           </div>
 

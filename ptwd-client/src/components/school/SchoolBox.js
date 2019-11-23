@@ -129,7 +129,7 @@ export default class SchoolBox extends React.Component {
 
       return (
         
-        <div>
+        <div id="schoolbox">
 
           <h2> {this.state.schoolName} </h2>
 

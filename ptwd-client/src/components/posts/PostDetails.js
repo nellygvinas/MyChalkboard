@@ -226,9 +226,7 @@ export default class PostDetails extends React.Component {
 
       return (
         
-        <div>
-
-          <div>
+        <div id="post-details">
 
 
           <div>
@@ -249,10 +247,6 @@ export default class PostDetails extends React.Component {
 
           </form>
 
-
-
-         </div>
-                
 
 
 

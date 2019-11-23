@@ -63,43 +63,56 @@ export default class Signup extends React.Component {
         }
 
         return (
-            <section>
-                <h2> Sign up </h2>
+            <div className="auth-wrapper">
+            <div className="auth-inner">
+                
                 <form onSubmit = {event => this.handleSubmit(event) } >
+                <h2> Sign up </h2>
                                         
+                    <div className="form-group">    
                     <label> Full name: </label>
                     <input
                         value={fullName} // this.state.fullName
                         onChange = { event => this.genericSync(event) } 
                         type="text"
                         name="fullName"
+                        className="form-control"
                         placeholder="Jane Doe"
                     />
+                    </div>
 
+                    <div className="form-group">
                     <label> Email: </label>
                     <input
                         value={email} // this.state.email
                         onChange = { event => this.genericSync(event) } 
                         type="email"
                         name="email"
+                        className="form-control"
                         placeholder="my-email@ironhack.com"
                     />
+                    </div>
 
+                    <div className="form-group">
                     <label> Password</label>
                     <input
                         value={password} // this.state.password
                         onChange = { event => this.genericSync(event) } 
                         type="password"
                         name="password"
+                        className="form-control"
                         placeholder="***********"
                     />
-                    <button> Sign Up </button>
+                    </div>
+
+                    <button type="submit" className="btn btn-info"> Sign Up </button>
                 </form>
                 {/* if the message is not null (basically if there's a message) then show it in this <div> tag */}
                 { this.state.message && <div> { this.state.message } </div> }
             
-            </section>
+            </div>
 
+            </div>
 
 
 

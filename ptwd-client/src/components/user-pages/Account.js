@@ -141,7 +141,7 @@ export default class Account extends React.Component {
       console.log("this.props:", this.props)
       
       return (
-        <section>
+        <div id="account">
 
             <h2> {this.state.fullName} </h2>
             
@@ -186,7 +186,7 @@ export default class Account extends React.Component {
             {/* if the message is not null (basically if there's a message) then show it in this <div> tag */}
             { this.state.message && <div> { this.state.message } </div> } 
         
-        </section>
+        </div>
 
 
         )

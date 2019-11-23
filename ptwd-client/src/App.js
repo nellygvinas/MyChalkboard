@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import axios from "axios";
 import { Switch, Route, NavLink, Link, Redirect } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Signup from "./components/user-pages/Signup";
 import Login from "./components/user-pages/Login";
@@ -22,6 +23,8 @@ import PostDetails from "./components/posts/PostDetails"
 
 
 
+
+
 class App extends React.Component {
 
   constructor(){
@@ -29,6 +32,8 @@ class App extends React.Component {
     
     this.state = {
       currentUser: null,
+      loggedIn: false,
+      message: null
       // redirect: false
     }
   }
@@ -39,14 +44,17 @@ class App extends React.Component {
       console.log("User in APP.JS: ", responseFromTheBackend)
       const { userDoc } = responseFromTheBackend.data;
       this.syncCurrentUser(userDoc);
+      // this.setState({ loggedIn: true }, () => {console.log("State after user found:", this.state.loggedIn)})
     })
     .catch(err => {
-      // this.setState({ redirect: true }, () => {console.log("State after user not found:", this.state.currentUser)})
       console.log("Err while getting the user from the checkuser route: ", err)})
   }
 
+
+
   syncCurrentUser(user){
-    this.setState({ currentUser: user }, () => {console.log("State after user set:", this.state.currentUser)})
+    this.setState({ currentUser: user}, () => {console.log("State after user set:", this.state)})
+    
   }
 
   // renderRedirect = () => {
@@ -57,6 +65,7 @@ class App extends React.Component {
 
 
   handleLogout(event){
+    this.setState({ loggedIn: false }, () => {console.log("State after user logout:", this.state.loggedIn)})
     console.log("Handling logout");
     event.preventDefault();
 
@@ -72,6 +81,9 @@ class App extends React.Component {
         this.syncCurrentUser(userDoc);
         alert("You are logged out.")
 
+        // if (!userDoc) {
+        //   return <Redirect to='/login' />
+        // }
         // possible  set state for redirecting:
         // this.setState({ redirect: true }, () => {console.log("State after user not found:", this.state.currentUser)})
     })
@@ -79,6 +91,8 @@ class App extends React.Component {
         console.log("err: ", err)
         // if(err.response.data) return this.setState({ message: err.response.data.message })
     });
+
+  
   
     
   }
@@ -88,23 +102,37 @@ class App extends React.Component {
 
   render (){   
     // console.log("the state in APPJS: ", this.state);
+    // if (!this.state.currentUser) {
+    //   return <Redirect to='/'
+    //   currentUser = { this.state.currentUser }   
+    //   onUserChange = { userDoc => this.syncCurrentUser(userDoc)} />
+    // }
 
 
     return (
 
-      <div >
+      <div className="App">
         <header>
-          <nav>
-            <NavLink to="/" > Home </NavLink>
+         <nav className="navbar navbar-expand-lg navbar-light fixed-top">
+          <div className="container">
+            <NavLink className="navbar-brand" to="/login" > <img className="img-responsive" src="logo.png" style={{width: '150px',height: '50px'}}/> 
+            </NavLink>
             {/* If no current user, signup will show. */}
-            { !this.state.currentUser && <NavLink to="/signup"> Signup </NavLink> }
+            <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
+            <ul className="navbar-nav ml-auto">
+              <li className="nav-item">
+            { !this.state.currentUser && <NavLink className="nav-link" to="/signup"> Signup </NavLink> }
+              </li>
+              <li className="nav-item">
             { !this.state.currentUser && <div> <NavLink to="/login"> Login </NavLink> </div> }
-            
+              </li>
+
             {/* If current user is signed in, Nav will show: */}
             <div>
             { this.state.currentUser && <Link to="/logout" onClick ={ event => this.handleLogout(event)}> Logout </Link> }  
-            { this.state.currentUser && this.state.currentUser.role && <NavLink to="/landing"> Landing </NavLink> }
-            { this.state.currentUser && this.state.currentUser.role && 
+            { this.state.currentUser && <NavLink to="/landing"> Landing </NavLink> }
+            
+            { this.state.currentUser && 
             //  <NavLink to="/account"> Account </NavLink>
              
              <NavLink to={{
@@ -117,20 +145,30 @@ class App extends React.Component {
                     role: this.state.currentUser.role
                   }
                 }
-              }}> Account </NavLink>
-            
-            }
-            
-            </div>
-          </nav>
-        </header>
+              }}> Account </NavLink>}
 
+
+                </div>
+                </ul>
+            </div>
+            </div>
+         </nav>
+        </header>
+            
+        
         <Switch>
         {/* this is example how we would render component normally */}
         {/* <Route exact path="/somePage" component={ someComponentThatWillRenderWhenThisRouteIsHit }   /> */}
-          <Route exact path="/" component={ Home }   /> 
+        
+        
+         {/* <Route exact path="/" render = { () => 
+            <Home 
+              currentUser = { this.state.currentUser }   
+              onUserChange = { userDoc => this.syncCurrentUser(userDoc) }   
+            /> 
+          }/> */}
+          <Route exact path="/" component = {Home}/>
 
-          {/* <Redirect to='/' component={Home}/> */}
 
           {/* if we have to pass some props down to a component,
           we can't use a standard way of rendering using component={},
@@ -142,13 +180,14 @@ class App extends React.Component {
             /> 
           }/>
 
-          {<Route exact path="/login" render = { () => 
+          <Route exact path="/login" render = { () => 
             <Login 
               currentUser = { this.state.currentUser }   
               onUserChange = { userDoc => this.syncCurrentUser(userDoc) }   
             /> 
-          }/>}
-
+          }/>
+        
+          
           <Route exact path="/account" component = {Account}/>
 
           {/* {<Route exact path="/account" render = { () => 
@@ -166,24 +205,27 @@ class App extends React.Component {
           
           <Route exact path="/setup/class" component={ NewClass }/>
 
-          {<Route exact path="/setup/admin" render = { () => 
+          <Route exact path="/setup/admin" render = { () => 
             <NewSchool
               currentUser = { this.state.currentUser }   
               // onUserChange = { userDoc => this.syncCurrentUser(userDoc) }   
             /> 
-          }/>}  
+          }/>
 
           <Route exact path="/school/details/:schoolId" component = {SchoolBox} /> 
         
           <Route exact path="/class/details/:classlId" component = {ClassDetails} /> 
 
 
-          {<Route exact path="/landing" render = { () => 
+          <Route exact path="/landing" render = { () => 
             <Landing
               currentUser = { this.state.currentUser }   
-              onUserChange = { userDoc => this.syncCurrentUser(userDoc) }   
+              onUserChange = { userDoc => this.syncCurrentUser(userDoc) }
             /> 
-          }/>}  
+            }
+          />
+          
+
 
           <Route exact path="/post/details/:postId" component = {PostDetails} />
 
@@ -191,6 +233,7 @@ class App extends React.Component {
           
 
         </Switch>
+        
           
           
       </div>

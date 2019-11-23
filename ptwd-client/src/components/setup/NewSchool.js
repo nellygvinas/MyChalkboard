@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import { Switch, Route, NavLink, Link } from "react-router-dom";
 import NewClass from "../setup/NewClass"
+import Form from 'react-bootstrap/Form'
 
 
 
@@ -74,8 +75,8 @@ export default class NewSchool extends React.Component {
 
           <h3>The School has been added: {this.state.schoolName}</h3>
           <h4>School Address: {this.state.address}</h4>
-          {this.state.city}
-          {this.state.state}
+          {this.state.city},
+          {this.state.state},
           {this.state.zip}
 
         <div>
@@ -141,9 +142,9 @@ export default class NewSchool extends React.Component {
       render(){
           
         return (
-        <div>
+        <div id="new-school">
 
-         <h1>PLEASE CREATE A NEW SCHOOL</h1> 
+         <h2>Please Create a new School</h2> 
 
               <form onSubmit ={ event => this.handleSubmit(event) } >
             

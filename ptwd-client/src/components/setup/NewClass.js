@@ -91,9 +91,9 @@ export default class NewClass extends React.Component {
 
 
       return (
-        <div>
+        <div id="new-class">
 
-         <h1>CREATE A NEW CLASS</h1> 
+         <h1>Create a new class</h1> 
 
               <form onSubmit ={ event => this.handleSubmit(event) } >
             
@@ -109,7 +109,7 @@ export default class NewClass extends React.Component {
                     <button> Create Class </button>
               </form>
 
-              {this.state.classAdded && this.state.classId && <div><h3> Your class: </h3>
+              {this.state.classAdded && this.state.classId && <div><h3> You added: </h3>
                   
                 <ClassBox 
                   currentUser = {this.props.location.state.currentUser}
